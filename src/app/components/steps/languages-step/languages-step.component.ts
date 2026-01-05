@@ -1,0 +1,92 @@
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { CvFormService } from '../../../services/cv-form.service';
+
+@Component({
+  selector: 'app-languages-step',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  template: `
+    <div class="space-y-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-semibold">Languages</h2>
+        <button
+          type="button"
+          (click)="addLanguage()"
+          class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded text-sm"
+        >
+          + Add Language
+        </button>
+      </div>
+
+      <div *ngIf="languagesArray.length === 0" class="text-gray-500 text-center py-8">
+        No languages yet. Click "Add Language" to get started.
+      </div>
+
+      <div
+        *ngFor="let lang of languagesArray.controls; let i = index"
+        class="border border-gray-200 rounded-lg p-4"
+      >
+        <div class="flex items-start justify-between">
+          <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Language <span class="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                [formControl]="$any(lang.get('language'))!"
+                placeholder="e.g., English"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Level <span class="text-red-500">*</span>
+              </label>
+              <select
+                [formControl]="$any(lang.get('level'))!"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select level</option>
+                <option value="Native">Native</option>
+                <option value="Fluent">Fluent</option>
+                <option value="Advanced">Advanced</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Basic">Basic</option>
+              </select>
+            </div>
+          </div>
+          <button
+            type="button"
+            (click)="removeLanguage(i)"
+            class="ml-4 px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  `,
+})
+export class LanguagesStepComponent {
+  @Input() formArray!: FormArray;
+
+  constructor(private formService: CvFormService) {}
+
+  get languagesArray(): FormArray {
+    return this.formArray;
+  }
+
+  addLanguage(): void {
+    const itemForm = this.formService.createLanguageItemForm();
+    this.languagesArray.push(itemForm);
+  }
+
+  removeLanguage(index: number): void {
+    this.languagesArray.removeAt(index);
+  }
+}
+
+

@@ -1,1 +1,50 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Print Styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Hide non-essential elements */
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  /* Ensure proper page breaks */
+  .cv-template-classic,
+  .cv-template-twocol {
+    break-inside: avoid;
+  }
+
+  /* Prevent section breaks */
+  h2 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  /* Ensure content doesn't get cut */
+  * {
+    break-inside: avoid;
+  }
+
+  /* Remove shadows and borders for print */
+  .shadow-lg,
+  .shadow {
+    box-shadow: none !important;
+  }
+
+  /* Ensure background colors print */
+  .bg-white,
+  .bg-gray-50 {
+    background-color: white !important;
+  }
+}
