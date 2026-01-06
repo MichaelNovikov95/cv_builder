@@ -1,0 +1,8 @@
+<div class="bg-white shadow-lg rounded-lg p-8 max-w-[900px] mx-auto">
+  <app-cv-template-classic
+    *ngIf="store.template() === 'classic'"
+  ></app-cv-template-classic>
+  <app-cv-template-twocolumn
+    *ngIf="store.template() === 'twocol'"
+  ></app-cv-template-twocolumn>
+</div>

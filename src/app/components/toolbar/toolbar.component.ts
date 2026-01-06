@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import {Component, inject, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { CvStoreService } from '../../services/cv-store.service';
@@ -8,83 +8,13 @@ import { JsonImportModalComponent } from '../json-import-modal/json-import-modal
   selector: 'app-toolbar',
   standalone: true,
   imports: [CommonModule, RouterModule, JsonImportModalComponent],
-  template: `
-    <div class="bg-white border-b border-gray-200 shadow-sm">
-      <div class="max-w-7xl mx-auto px-4 py-3">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div class="flex items-center gap-4">
-            <h1 class="text-xl font-bold text-gray-900">CV Builder</h1>
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-gray-600">Template:</span>
-              <select
-                [value]="store.template()"
-                (change)="onTemplateChange($event)"
-                class="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="classic">Classic</option>
-                <option value="twocol">Two Column</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              (click)="loadDemo()"
-              class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-            >
-              Load Demo
-            </button>
-            <button
-              type="button"
-              (click)="exportJson()"
-              class="px-3 py-1.5 bg-blue-600 text-white hover:bg-blue-700 rounded text-sm"
-            >
-              Export JSON
-            </button>
-            <button
-              type="button"
-              (click)="openImportModal()"
-              class="px-3 py-1.5 bg-green-600 text-white hover:bg-green-700 rounded text-sm"
-            >
-              Import JSON
-            </button>
-            <button
-              type="button"
-              (click)="goToPreview()"
-              class="px-3 py-1.5 bg-purple-600 text-white hover:bg-purple-700 rounded text-sm"
-            >
-              Print / PDF
-            </button>
-          </div>
-        </div>
-
-        <div *ngIf="store.ui().error" class="mt-2 p-2 bg-red-100 text-red-700 rounded text-sm">
-          {{ store.ui().error }}
-          <button
-            type="button"
-            (click)="store.clearError()"
-            class="ml-2 underline"
-          >
-            Dismiss
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <app-json-import-modal
-      #importModal
-      (import)="handleImport($event)"
-    ></app-json-import-modal>
-  `,
+  templateUrl: 'toolbar.component.html',
 })
 export class ToolbarComponent {
   @ViewChild('importModal') importModal!: JsonImportModalComponent;
 
-  constructor(
-    public store: CvStoreService,
-    private router: Router
-  ) {}
+  public store = inject(CvStoreService);
+  private router = inject(Router);
 
   onTemplateChange(event: Event): void {
     const target = event.target as HTMLSelectElement;

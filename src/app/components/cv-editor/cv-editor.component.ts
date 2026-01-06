@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, effect } from '@angular/core';
+import {Component, OnInit, OnDestroy, effect, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormGroup,
@@ -57,99 +57,13 @@ const STEPS: Step[] = [
     CvPreviewComponent,
     SectionToggleComponent,
   ],
-  template: `
-    <div class="flex flex-col lg:flex-row h-[calc(100vh-80px)]">
-      <!-- Editor Panel -->
-      <div class="flex-1 lg:w-1/2 overflow-y-auto bg-gray-50 p-6">
-        <div class="max-w-3xl mx-auto">
-          <!-- Stepper -->
-          <div class="mb-6">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-semibold">Edit Your CV</h2>
-              <div class="flex items-center gap-2">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    [checked]="store.ui().compact"
-                    (change)="store.setCompact(!store.ui().compact)"
-                    class="w-4 h-4"
-                  />
-                  <span class="text-sm text-gray-700">Compact Spacing</span>
-                </label>
-              </div>
-            </div>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <button
-                *ngFor="let step of steps"
-                type="button"
-                (click)="goToStep(step.id)"
-                [class.bg-blue-600]="activeStep === step.id"
-                [class.text-white]="activeStep === step.id"
-                [class.bg-gray-200]="activeStep !== step.id"
-                [class.text-gray-700]="activeStep !== step.id"
-                class="px-4 py-2 rounded text-sm font-medium hover:opacity-90"
-              >
-                {{ step.name }}
-              </button>
-            </div>
-          </div>
-
-          <!-- Section Toggles -->
-          <div class="mb-4 p-4 bg-white rounded border border-gray-200">
-            <h3 class="text-sm font-semibold mb-2">Show/Hide Sections</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-              <app-section-toggle
-                *ngFor="let step of steps"
-                [checked]="store.ui().showSections[step.key]"
-                [label]="step.name"
-                (toggle)="store.toggleSection(step.key)"
-              ></app-section-toggle>
-            </div>
-          </div>
-
-          <!-- Form Steps -->
-          <div class="bg-white rounded-lg shadow p-6">
-            <form [formGroup]="cvForm">
-              <div [hidden]="activeStep !== 0">
-                <app-profile-step [form]="profileForm"></app-profile-step>
-              </div>
-              <div [hidden]="activeStep !== 1">
-                <app-experience-step [formArray]="experienceForm"></app-experience-step>
-              </div>
-              <div [hidden]="activeStep !== 2">
-                <app-education-step [formArray]="educationForm"></app-education-step>
-              </div>
-              <div [hidden]="activeStep !== 3">
-                <app-skills-step [formArray]="skillsForm"></app-skills-step>
-              </div>
-              <div [hidden]="activeStep !== 4">
-                <app-projects-step [formArray]="projectsForm"></app-projects-step>
-              </div>
-              <div [hidden]="activeStep !== 5">
-                <app-certifications-step [formArray]="certificationsForm"></app-certifications-step>
-              </div>
-              <div [hidden]="activeStep !== 6">
-                <app-languages-step [formArray]="languagesForm"></app-languages-step>
-              </div>
-              <div [hidden]="activeStep !== 7">
-                <app-additional-step [form]="additionalForm"></app-additional-step>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <!-- Preview Panel -->
-      <div class="flex-1 lg:w-1/2 overflow-y-auto bg-gray-100 p-6 border-t lg:border-t-0 lg:border-l border-gray-300">
-        <div class="max-w-2xl mx-auto">
-          <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
-          <app-cv-preview></app-cv-preview>
-        </div>
-      </div>
-    </div>
-  `,
+  templateUrl: './cv-editor.component.html',
 })
 export class CvEditorComponent implements OnInit, OnDestroy {
+  private fb = inject(FormBuilder);
+  public store = inject(CvStoreService);
+  private formService = inject(CvFormService);
+
   steps: Step[] = STEPS;
   activeStep = 0;
   cvForm!: FormGroup;
@@ -187,20 +101,12 @@ export class CvEditorComponent implements OnInit, OnDestroy {
     return this.cvForm.get('additional') as FormGroup;
   }
 
-  constructor(
-    private fb: FormBuilder,
-    public store: CvStoreService,
-    private formService: CvFormService
-  ) {
-    // Sync active step from store
-    effect(() => {
-      this.activeStep = this.store.ui().activeStep;
-    });
-  }
-
   ngOnInit(): void {
     this.buildForm();
     this.subscribeToFormChanges();
+    effect(() => {
+      this.activeStep = this.store.ui().activeStep;
+    });
   }
 
   ngOnDestroy(): void {

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CvFormService } from '../../../services/cv-form.service';
@@ -7,105 +7,11 @@ import { CvFormService } from '../../../services/cv-form.service';
   selector: 'app-certifications-step',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  template: `
-    <div class="space-y-4">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-semibold">Certifications</h2>
-        <button
-          type="button"
-          (click)="addCertification()"
-          class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded text-sm"
-        >
-          + Add Certification
-        </button>
-      </div>
-
-      <div *ngIf="certificationsArray.length === 0" class="text-gray-500 text-center py-8">
-        No certifications yet. Click "Add Certification" to get started.
-      </div>
-
-      <div
-        *ngFor="let cert of certificationsArray.controls; let i = index"
-        class="border border-gray-200 rounded-lg p-4 space-y-4"
-      >
-        <div class="flex items-start justify-between">
-          <h3 class="text-lg font-semibold">Certification #{{ i + 1 }}</h3>
-          <button
-            type="button"
-            (click)="removeCertification(i)"
-            class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
-          >
-            Remove
-          </button>
-        </div>
-
-        <div [formGroup]="$any(cert)" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Certification Name <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                formControlName="name"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Issuer <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                formControlName="issuer"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Issue Date <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                formControlName="date"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-              <input
-                type="date"
-                formControlName="expiryDate"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Credential ID</label>
-              <input
-                type="text"
-                formControlName="credentialId"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">URL</label>
-              <input
-                type="url"
-                formControlName="url"
-                placeholder="https://..."
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
+  templateUrl: 'certification-step.component.html',
 })
 export class CertificationsStepComponent {
+  public formService = inject(CvFormService);
   @Input() formArray!: FormArray;
-
-  constructor(private formService: CvFormService) {}
 
   get certificationsArray(): FormArray {
     return this.formArray;

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CvFormService } from '../../../services/cv-form.service';
@@ -8,147 +8,11 @@ import { ReorderButtonsComponent } from '../../reorder-buttons/reorder-buttons.c
   selector: 'app-experience-step',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, ReorderButtonsComponent],
-  template: `
-    <div class="space-y-4">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-semibold">Work Experience</h2>
-        <button
-          type="button"
-          (click)="addExperience()"
-          class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded text-sm"
-        >
-          + Add Experience
-        </button>
-      </div>
-
-      <div *ngIf="experienceArray.length === 0" class="text-gray-500 text-center py-8">
-        No experience entries yet. Click "Add Experience" to get started.
-      </div>
-
-      <div
-        *ngFor="let exp of experienceArray.controls; let i = index"
-        class="border border-gray-200 rounded-lg p-4 space-y-4"
-      >
-        <div class="flex items-start justify-between">
-          <h3 class="text-lg font-semibold">Experience #{{ i + 1 }}</h3>
-          <div class="flex items-center gap-2">
-            <app-reorder-buttons
-              [canMoveUp]="i > 0"
-              [canMoveDown]="i < experienceArray.length - 1"
-              (moveUp)="moveUp(i)"
-              (moveDown)="moveDown(i)"
-            ></app-reorder-buttons>
-            <button
-              type="button"
-              (click)="removeExperience(i)"
-              class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
-            >
-              Remove
-            </button>
-          </div>
-        </div>
-
-        <div [formGroup]="$any(exp)" class="space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Company <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                formControlName="company"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Role <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                formControlName="role"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Start Date <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="date"
-                formControlName="startDate"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-              <input
-                type="date"
-                formControlName="endDate"
-                [disabled]="exp.get('current')?.value"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-              />
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-              <input
-                type="text"
-                formControlName="location"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div class="flex items-center">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  formControlName="current"
-                  (change)="onCurrentChange($any(exp))"
-                  class="w-4 h-4"
-                />
-                <span class="text-sm text-gray-700">Current Position</span>
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Achievements</label>
-            <div formArrayName="achievements" class="space-y-2">
-              <div
-                *ngFor="let bullet of getAchievements($any(exp)).controls; let j = index"
-                class="flex gap-2"
-              >
-                <input
-                  type="text"
-                  [formControl]="$any(bullet)"
-                  placeholder="Enter achievement..."
-                  class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  type="button"
-                  (click)="removeBullet($any(exp), j)"
-                  class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-                >
-                  Remove
-                </button>
-              </div>
-              <button
-                type="button"
-                (click)="addBullet($any(exp))"
-                class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-              >
-                + Add Achievement
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
+  templateUrl: 'experience-step.component.html',
 })
 export class ExperienceStepComponent {
+  public formService = inject(CvFormService);
   @Input() formArray!: FormArray;
-
-  constructor(private formService: CvFormService) {}
 
   get experienceArray(): FormArray {
     return this.formArray;
