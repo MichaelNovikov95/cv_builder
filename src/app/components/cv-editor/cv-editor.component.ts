@@ -61,7 +61,7 @@ const STEPS: Step[] = [
 })
 export class CvEditorComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
-  private store = inject(CvStoreService);
+  public store = inject(CvStoreService);
   private formService = inject(CvFormService);
 
   steps: Step[] = STEPS;
