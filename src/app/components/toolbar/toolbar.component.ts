@@ -13,7 +13,7 @@ import { JsonImportModalComponent } from '../json-import-modal/json-import-modal
 export class ToolbarComponent {
   @ViewChild('importModal') importModal!: JsonImportModalComponent;
 
-  private store = inject(CvStoreService);
+  public store = inject(CvStoreService);
   private router = inject(Router);
 
   onTemplateChange(event: Event): void {

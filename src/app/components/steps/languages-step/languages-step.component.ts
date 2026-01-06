@@ -7,7 +7,7 @@ import { CvFormService } from '../../../services/cv-form.service';
   selector: 'app-languages-step',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: 'languages-step.component.html',
+  templateUrl: './/languages-step.component.html',
 })
 export class LanguagesStepComponent {
   public formService = inject(CvFormService);
