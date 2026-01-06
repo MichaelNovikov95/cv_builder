@@ -4,10 +4,10 @@ import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CvFormService } from '../../../services/cv-form.service';
 
 @Component({
-  selector: 'app-languages-step',
   standalone: true,
+  selector: 'app-languages-step',
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './/languages-step.component.html',
+  templateUrl: './language-step.component.html',
 })
 export class LanguagesStepComponent {
   public formService = inject(CvFormService);
