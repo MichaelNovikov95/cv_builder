@@ -13,32 +13,7 @@ import { CommonModule } from '@angular/common';
       multi: true,
     },
   ],
-  template: `
-    <div class="flex flex-wrap gap-2 items-center">
-      <div
-        *ngFor="let tag of tags; let i = index"
-        class="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm"
-      >
-        <span>{{ tag }}</span>
-        <button
-          type="button"
-          (click)="removeTag(i)"
-          class="ml-1 text-blue-600 hover:text-blue-800"
-        >
-          ×
-        </button>
-      </div>
-      <input
-        type="text"
-        [value]="inputValue"
-        (input)="onInput($event)"
-        (keydown.enter)="addTag($event)"
-        (blur)="addTag($event)"
-        placeholder="Add tag and press Enter"
-        class="flex-1 min-w-[150px] px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-    </div>
-  `,
+  templateUrl: 'tag-input.component.html',
 })
 export class TagInputComponent implements ControlValueAccessor {
   tags: string[] = [];
