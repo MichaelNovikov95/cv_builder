@@ -14,51 +14,52 @@ export interface Profile {
 export interface ExperienceItem {
   company: string;
   role: string;
-  startDate: string; // ISO date string
-  endDate?: string; // ISO date string, undefined if current
+  role_description?: string;
+  startDate: string;
+  endDate?: string;
   current: boolean;
   location?: string;
-  achievements: string[]; // bullet points
+  achievements: string[];
 }
 
 export interface EducationItem {
   school: string;
   degree: string;
   field?: string;
-  startDate: string; // ISO date string
-  endDate?: string; // ISO date string
+  startDate: string;
+  endDate?: string;
   notes?: string;
 }
 
 export interface SkillsGroup {
-  name: string; // e.g., "Frontend", "Backend", "Tools", "Languages"
+  name: string;
   items: string[];
 }
 
 export interface ProjectItem {
   name: string;
   description: string;
-  stack: string[]; // tags
+  stack: string[];
   links?: {
     live?: string;
     github?: string;
     demo?: string;
   };
-  highlights: string[]; // bullet points
+  highlights: string[];
 }
 
 export interface CertificationItem {
   name: string;
   issuer: string;
-  date: string; // ISO date string
-  expiryDate?: string; // ISO date string
+  date: string;
+  expiryDate?: string;
   credentialId?: string;
   url?: string;
 }
 
 export interface LanguageItem {
   language: string;
-  level: string; // e.g., "Native", "Fluent", "Intermediate", "Basic"
+  level: string;
 }
 
 export interface AdditionalInfo {

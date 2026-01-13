@@ -15,11 +15,15 @@ export class CvTemplateClassicComponent {
 
   cv = this.store.cv;
   sortedExperience = this.store.sortedExperience;
-  sortedEducation = this.store.sortedEducation;
-  sortedProjects = this.store.sortedProjects;
-  sortedCertifications = this.store.sortedCertifications;
+  // sortedEducation = this.store.sortedEducation;
+  // sortedProjects = this.store.sortedProjects;
+  // sortedCertifications = this.store.sortedCertifications;
 
-  formatDate = formatDate;
+  allSkills(): string[] {
+    return this.cv().skills.flatMap(group => group.items);
+  }
+
+  // formatDate = formatDate;
   formatDateRange = formatDateRange;
 }
 

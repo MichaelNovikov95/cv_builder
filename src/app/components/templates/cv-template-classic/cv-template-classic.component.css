@@ -1,4 +1,4 @@
-.cv-template-classic.compact * {
+.cv-template-classic.compact *:not(.skill-item) {
   margin-bottom: 0.5rem;
 }
 .cv-template-classic.compact h2 {

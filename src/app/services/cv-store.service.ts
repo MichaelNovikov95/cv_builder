@@ -52,12 +52,10 @@ const initialUiState: CvUiState = {
   providedIn: 'root',
 })
 export class CvStoreService {
-  // Core state signals
   readonly cv = signal<CvModel>(initialCv);
   readonly template = signal<CvTemplate>('classic');
   readonly ui = signal<CvUiState>(initialUiState);
 
-  // Computed selectors
   readonly sortedExperience = computed(() => {
     return [...this.cv().experience].reverse(); // Most recent first
   });
@@ -75,16 +73,13 @@ export class CvStoreService {
   });
 
   constructor() {
-    // Load from localStorage on init
     this.load();
 
-    // Auto-save to localStorage when cv or template changes
     effect(() => {
       const cvData = this.cv();
       const templateData = this.template();
       const uiData = this.ui();
 
-      // Debounce save (simple approach: save after a delay)
       const timeoutId = setTimeout(() => {
         this.save();
       }, 500);
@@ -99,7 +94,6 @@ export class CvStoreService {
       if (stored) {
         const data = JSON.parse(stored);
 
-        // Validate schema version
         if (data.schemaVersion === SCHEMA_VERSION) {
           this.cv.set(data.cv || initialCv);
           this.template.set(data.template || 'classic');
@@ -169,7 +163,6 @@ export class CvStoreService {
     try {
       const parsed = JSON.parse(jsonString);
 
-      // Basic validation
       if (!parsed || typeof parsed !== 'object') {
         return { success: false, error: 'Invalid JSON format' };
       }
@@ -178,7 +171,6 @@ export class CvStoreService {
         return { success: false, error: 'Missing required fields: profile.name and profile.email' };
       }
 
-      // Merge with defaults to ensure all fields exist
       const imported: CvModel = {
         ...initialCv,
         ...parsed,
@@ -229,6 +221,12 @@ export class CvStoreService {
             'Implemented CI/CD pipelines reducing deployment time from 2 hours to 15 minutes',
             'Mentored junior developers and established coding standards and best practices',
           ],
+          role_description: "As a Senior Full Stack Developer, I was responsible for designing, " +
+            "developing, and maintaining scalable web applications using a microservices architecture. " +
+            "I collaborated closely with product managers, designers, and backend teams to deliver " +
+            "high-quality features for a platform serving over one million users. My role included " +
+            "leading technical decisions, optimizing system performance, implementing CI/CD pipelines, " +
+            "and ensuring code quality through best practices and mentoring junior developers."
         },
         {
           company: 'StartupXYZ',
@@ -242,6 +240,125 @@ export class CvStoreService {
             'Designed and implemented RESTful APIs handling 100K+ requests per day',
             'Collaborated with designers to create responsive, accessible UI components',
           ],
+          role_description: "As a Full Stack Developer at a fast-growing startup, I built the MVP from " +
+            "the ground up using Angular and Node.js. I was involved in all stages of development, from " +
+            "API design and backend implementation to creating responsive, accessible user interfaces. " +
+            "I worked closely with designers and stakeholders to rapidly deliver features, scale the " +
+            "platform to tens of thousands of users, and support high-traffic production workloads."
+        },
+        {
+          company: 'Tech Corp Inc.',
+          role: 'Senior Full Stack Developer',
+          startDate: '2020-01-15',
+          endDate: undefined,
+          current: true,
+          location: 'San Francisco, CA',
+          achievements: [
+            'Led a team of 5 developers to build a microservices architecture serving 1M+ users',
+            'Reduced API response time by 60% through optimization and caching strategies',
+            'Implemented CI/CD pipelines reducing deployment time from 2 hours to 15 minutes',
+            'Mentored junior developers and established coding standards and best practices',
+          ],
+          role_description: "As a Senior Full Stack Developer, I was responsible for designing, " +
+            "developing, and maintaining scalable web applications using a microservices architecture. " +
+            "I collaborated closely with product managers, designers, and backend teams to deliver " +
+            "high-quality features for a platform serving over one million users. My role included " +
+            "leading technical decisions, optimizing system performance, implementing CI/CD pipelines, " +
+            "and ensuring code quality through best practices and mentoring junior developers."
+        },
+        {
+          company: 'StartupXYZ',
+          role: 'Full Stack Developer',
+          startDate: '2017-06-01',
+          endDate: '2019-12-31',
+          current: false,
+          location: 'Remote',
+          achievements: [
+            'Built the MVP from scratch using Angular and Node.js, acquired 10K+ users in first year',
+            'Designed and implemented RESTful APIs handling 100K+ requests per day',
+            'Collaborated with designers to create responsive, accessible UI components',
+          ],
+          role_description: "As a Full Stack Developer at a fast-growing startup, I built the MVP from " +
+            "the ground up using Angular and Node.js. I was involved in all stages of development, from " +
+            "API design and backend implementation to creating responsive, accessible user interfaces. " +
+            "I worked closely with designers and stakeholders to rapidly deliver features, scale the " +
+            "platform to tens of thousands of users, and support high-traffic production workloads."
+        },
+        {
+          company: 'Tech Corp Inc.',
+          role: 'Senior Full Stack Developer',
+          startDate: '2020-01-15',
+          endDate: undefined,
+          current: true,
+          location: 'San Francisco, CA',
+          achievements: [
+            'Led a team of 5 developers to build a microservices architecture serving 1M+ users',
+            'Reduced API response time by 60% through optimization and caching strategies',
+            'Implemented CI/CD pipelines reducing deployment time from 2 hours to 15 minutes',
+            'Mentored junior developers and established coding standards and best practices',
+          ],
+          role_description: "As a Senior Full Stack Developer, I was responsible for designing, " +
+            "developing, and maintaining scalable web applications using a microservices architecture. " +
+            "I collaborated closely with product managers, designers, and backend teams to deliver " +
+            "high-quality features for a platform serving over one million users. My role included " +
+            "leading technical decisions, optimizing system performance, implementing CI/CD pipelines, " +
+            "and ensuring code quality through best practices and mentoring junior developers."
+        },
+        {
+          company: 'StartupXYZ',
+          role: 'Full Stack Developer',
+          startDate: '2017-06-01',
+          endDate: '2019-12-31',
+          current: false,
+          location: 'Remote',
+          achievements: [
+            'Built the MVP from scratch using Angular and Node.js, acquired 10K+ users in first year',
+            'Designed and implemented RESTful APIs handling 100K+ requests per day',
+            'Collaborated with designers to create responsive, accessible UI components',
+          ],
+          role_description: "As a Full Stack Developer at a fast-growing startup, I built the MVP from " +
+            "the ground up using Angular and Node.js. I was involved in all stages of development, from " +
+            "API design and backend implementation to creating responsive, accessible user interfaces. " +
+            "I worked closely with designers and stakeholders to rapidly deliver features, scale the " +
+            "platform to tens of thousands of users, and support high-traffic production workloads."
+        },
+        {
+          company: 'Tech Corp Inc.',
+          role: 'Senior Full Stack Developer',
+          startDate: '2020-01-15',
+          endDate: undefined,
+          current: true,
+          location: 'San Francisco, CA',
+          achievements: [
+            'Led a team of 5 developers to build a microservices architecture serving 1M+ users',
+            'Reduced API response time by 60% through optimization and caching strategies',
+            'Implemented CI/CD pipelines reducing deployment time from 2 hours to 15 minutes',
+            'Mentored junior developers and established coding standards and best practices',
+          ],
+          role_description: "As a Senior Full Stack Developer, I was responsible for designing, " +
+            "developing, and maintaining scalable web applications using a microservices architecture. " +
+            "I collaborated closely with product managers, designers, and backend teams to deliver " +
+            "high-quality features for a platform serving over one million users. My role included " +
+            "leading technical decisions, optimizing system performance, implementing CI/CD pipelines, " +
+            "and ensuring code quality through best practices and mentoring junior developers."
+        },
+        {
+          company: 'StartupXYZ',
+          role: 'Full Stack Developer',
+          startDate: '2017-06-01',
+          endDate: '2019-12-31',
+          current: false,
+          location: 'Remote',
+          achievements: [
+            'Built the MVP from scratch using Angular and Node.js, acquired 10K+ users in first year',
+            'Designed and implemented RESTful APIs handling 100K+ requests per day',
+            'Collaborated with designers to create responsive, accessible UI components',
+          ],
+          role_description: "As a Full Stack Developer at a fast-growing startup, I built the MVP from " +
+            "the ground up using Angular and Node.js. I was involved in all stages of development, from " +
+            "API design and backend implementation to creating responsive, accessible user interfaces. " +
+            "I worked closely with designers and stakeholders to rapidly deliver features, scale the " +
+            "platform to tens of thousands of users, and support high-traffic production workloads."
         },
       ],
       education: [
@@ -266,10 +383,6 @@ export class CvStoreService {
         {
           name: 'Tools',
           items: ['Git', 'Docker', 'AWS', 'Jenkins', 'Jest', 'Cypress'],
-        },
-        {
-          name: 'Languages',
-          items: ['English (Native)', 'Spanish (Fluent)'],
         },
       ],
       projects: [

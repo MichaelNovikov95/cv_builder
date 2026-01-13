@@ -2,49 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Print Styles */
 @media print {
-  @page {
-    size: A4;
-    margin: 1cm;
+  @page { size: A4; margin: 0; }
+
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   body {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
+    position: relative;
   }
 
-  /* Hide non-essential elements */
-  .print\\:hidden {
-    display: none !important;
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background-color: #040A1B;
+    background-image: url("/assets/images/blue_bg.png");
+    background-repeat: no-repeat;
+
+    background-position: right 0 bottom -200px;
+
+    background-size: contain;
+    pointer-events: none;
+
+    z-index: 0;
   }
 
-  /* Ensure proper page breaks */
+  .cv-print-root,
   .cv-template-classic,
-  .cv-template-twocol {
-    break-inside: avoid;
+  .cv-template-twocol,
+  .cv-grid {
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
   }
 
-  /* Prevent section breaks */
-  h2 {
-    break-after: avoid;
-    page-break-after: avoid;
+  .cv-grid, .cv-main, .cv-sidebar {
+    transform: none !important;
   }
 
-  /* Ensure content doesn't get cut */
-  * {
-    break-inside: avoid;
+  /* sidebar — як було */
+  .cv-sidebar {
+    position: fixed;
+    top: 15%;
+    right: 5%;
+    width: 25%;
+    z-index: 2;
   }
 
-  /* Remove shadows and borders for print */
-  .shadow-lg,
-  .shadow {
-    box-shadow: none !important;
+  .cv-main {
+    padding-right: calc(25% + 5%);
   }
 
-  /* Ensure background colors print */
-  .bg-white,
-  .bg-gray-50 {
-    background-color: white !important;
+  .name-gradient {
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+
+    -webkit-text-fill-color: #AFF1FF !important;
+    color: #AFF1FF !important;
   }
 }
