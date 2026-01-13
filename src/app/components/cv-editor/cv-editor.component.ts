@@ -101,12 +101,13 @@ export class CvEditorComponent implements OnInit, OnDestroy {
     return this.cvForm.get('additional') as FormGroup;
   }
 
+  private readonly syncActiveStep = effect(() => {
+    this.activeStep = this.store.ui().activeStep;
+  });
+
   ngOnInit(): void {
     this.buildForm();
     this.subscribeToFormChanges();
-    effect(() => {
-      this.activeStep = this.store.ui().activeStep;
-    });
   }
 
   ngOnDestroy(): void {
