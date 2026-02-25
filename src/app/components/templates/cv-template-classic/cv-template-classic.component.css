@@ -1,6 +1,80 @@
+.cv-template-classic {
+  --classic-text: #ffffff;
+  --classic-accent: #36d4f7;
+  --classic-accent-soft: rgb(175 241 255 / 0.04);
+}
+
 .cv-template-classic.compact *:not(.skill-item) {
   margin-bottom: 0.5rem;
 }
 .cv-template-classic.compact h2 {
   margin-bottom: 0.75rem;
+}
+
+.classic-text {
+  color: var(--classic-text);
+}
+
+.classic-section-title {
+  color: var(--classic-text);
+  font-weight: 700;
+}
+
+.classic-skill-chip {
+  border: 1px solid var(--classic-accent);
+  background: var(--classic-accent-soft);
+}
+
+.classic-skill-text {
+  color: var(--classic-accent);
+}
+
+.classic-tech-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  max-width: 250px;
+}
+
+.classic-tech-icon {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.6rem;
+  min-height: 1.6rem;
+  line-height: 1;
+}
+
+.classic-tech-glyph {
+  grid-area: 1 / 1;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.classic-tech-glyph-bg {
+  color: var(--classic-text);
+  transform: none;
+}
+
+.classic-tech-glyph-fg {
+  color: var(--classic-accent);
+  filter: drop-shadow(0 0 2px rgba(54, 212, 247, 0.15));
+}
+
+.classic-tech-icon-outline-fill .classic-tech-glyph-fg {
+  color: var(--classic-accent);
+  -webkit-text-stroke: 0;
+  filter: none;
+}
+
+.classic-tech-glyph.devicon-amazonwebservices-plain-wordmark {
+  font-size: 1.45rem;
+}
+
+.classic-tech-glyph-bg.devicon-amazonwebservices-plain-wordmark {
+  transform: none;
+}
+
+.classic-tech-glyph-fg.devicon-amazonwebservices-plain-wordmark {
+  color: var(--classic-accent);
 }

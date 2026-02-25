@@ -13,5 +13,3 @@ import { CvTemplateTwoColumnComponent } from '../templates/cv-template-twocolumn
 export class CvPreviewComponent {
   public store = inject(CvStoreService);
 }
-
-

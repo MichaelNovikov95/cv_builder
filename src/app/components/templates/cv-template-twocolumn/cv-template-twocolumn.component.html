@@ -122,47 +122,6 @@
       </div>
     </div>
 
-    <!-- Projects -->
-    <div *ngIf="store.ui().showSections.projects && sortedProjects().length > 0" class="mb-6">
-      <h2 class="text-xl font-bold text-gray-900 mb-4 pb-2 border-b border-gray-300">
-        Projects
-      </h2>
-      <div class="space-y-4">
-        <div *ngFor="let project of sortedProjects()" class="mb-4">
-          <div class="flex justify-between items-start mb-1">
-            <h3 class="text-lg font-semibold text-gray-900">{{ project.name }}</h3>
-            <div *ngIf="project.links" class="flex gap-2 text-xs">
-              <a
-                *ngIf="project.links.live"
-                [href]="project.links.live"
-                target="_blank"
-                class="text-blue-600 hover:underline"
-              >
-                Live
-              </a>
-              <a
-                *ngIf="project.links.github"
-                [href]="project.links.github"
-                target="_blank"
-                class="text-blue-600 hover:underline"
-              >
-                GitHub
-              </a>
-            </div>
-          </div>
-          <p class="text-gray-700 text-sm mb-2">{{ project.description }}</p>
-          <p *ngIf="project.stack.length > 0" class="text-xs text-gray-600 mb-2">
-            <strong>Stack:</strong> {{ project.stack.join(', ') }}
-          </p>
-          <ul *ngIf="project.highlights.length > 0" class="list-disc list-inside space-y-1">
-            <li *ngFor="let highlight of project.highlights" class="text-gray-700 text-sm">
-              {{ highlight }}
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
     <!-- Certifications -->
     <div
       *ngIf="store.ui().showSections.certifications && sortedCertifications().length > 0"

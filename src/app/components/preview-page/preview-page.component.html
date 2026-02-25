@@ -1,20 +1,27 @@
-<div class="min-h-screen bg-gray-100 print:bg-white">
+<div class="app-page print:bg-white">
   <!-- Toolbar (hidden in print) -->
-  <div class="print:hidden bg-white border-b border-gray-200 shadow-sm p-4">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <h1 class="text-xl font-bold text-gray-900">CV Preview</h1>
-      <div class="flex gap-2">
+  <div class="app-toolbar print:hidden">
+    <div class="app-toolbar-inner">
+      <h1 class="app-toolbar-title">CV Preview</h1>
+      <div class="app-toolbar-actions">
+        <button
+          type="button"
+          (click)="toggleTheme()"
+          class="app-btn app-btn-secondary"
+        >
+          {{ theme.isDark() ? 'Light mode' : 'Dark mode' }}
+        </button>
         <button
           type="button"
           (click)="goBack()"
-          class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded text-sm"
+          class="app-btn app-btn-secondary"
         >
           Back to Editor
         </button>
         <button
           type="button"
           (click)="print()"
-          class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded text-sm"
+          class="app-btn app-btn-primary"
         >
           Print / Save as PDF
         </button>
@@ -24,12 +31,7 @@
 
   <!-- CV Content -->
   <div>
-    <div class="cv-root bg-[#040A1B] bg-[url('/assets/images/blue_bg.png')]
-    bg-no-repeat bg-[right_bottom_-200px]
-    shadow-lg rounded-lg p-8 max-w-[900px] mx-auto
-    print:shadow-none print:w-[210mm]
-    print:h-[297mm] print:max-w-none
-    print:mx-0 print:rounded-none" >
+    <div class="cv-root cv-shell" >
       <app-cv-template-classic
         *ngIf="store.template() === 'classic'"
       ></app-cv-template-classic>
