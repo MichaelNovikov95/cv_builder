@@ -72,6 +72,33 @@ export class CvStoreService {
     return [...this.cv().certifications].reverse();
   });
 
+  private readonly demoExperienceStacks: Record<string, string[]> = {
+    'Tech Corp Inc.|Senior Full Stack Developer': [
+      'React',
+      'Redux',
+      'NestJS',
+      'Node.js',
+      'Sequelize',
+      'TypeScript',
+      'HTML5',
+      'CSS3',
+      'Nginx',
+      'JavaScript',
+      'AWS',
+    ],
+    'StartupXYZ|Full Stack Developer': [
+      'Angular',
+      'Node.js',
+      'TypeScript',
+      'JavaScript',
+      'HTML5',
+      'CSS3',
+      'PostgreSQL',
+      'Docker',
+      'AWS',
+    ],
+  };
+
   constructor() {
     this.load();
 
@@ -88,6 +115,23 @@ export class CvStoreService {
     });
   }
 
+  private attachDemoExperienceStacks(experience: ExperienceItem[]): ExperienceItem[] {
+    return experience.map(item => {
+      const key = `${item.company}|${item.role}`;
+      return {
+        ...item,
+        stack: item.stack?.length ? item.stack : (this.demoExperienceStacks[key] ?? []),
+      };
+    });
+  }
+
+  private normalizeCv(cv: CvModel): CvModel {
+    return {
+      ...cv,
+      experience: this.attachDemoExperienceStacks(cv.experience ?? []),
+    };
+  }
+
   load(): void {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -95,7 +139,7 @@ export class CvStoreService {
         const data = JSON.parse(stored);
 
         if (data.schemaVersion === SCHEMA_VERSION) {
-          this.cv.set(data.cv || initialCv);
+          this.cv.set(this.normalizeCv(data.cv || initialCv));
           this.template.set(data.template || 'classic');
           if (data.ui) {
             this.ui.set({ ...initialUiState, ...data.ui });
@@ -185,7 +229,7 @@ export class CvStoreService {
         schemaVersion: SCHEMA_VERSION,
       };
 
-      this.cv.set(imported);
+      this.cv.set(this.normalizeCv(imported));
       return { success: true };
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : 'Invalid JSON' };
@@ -448,6 +492,8 @@ export class CvStoreService {
       },
     };
 
+    demoCv.experience = this.attachDemoExperienceStacks(demoCv.experience);
+
     this.cv.set(demoCv);
     this.template.set('classic');
     this.ui.set(initialUiState);
@@ -459,5 +505,3 @@ export class CvStoreService {
     this.ui.set(initialUiState);
   }
 }
-
-

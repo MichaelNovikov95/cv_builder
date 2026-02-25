@@ -51,6 +51,9 @@ export class CvFormService {
       endDate: new FormControl(item?.endDate || ''),
       current: new FormControl(item?.current || false),
       location: new FormControl(item?.location || ''),
+      stack: new FormArray(
+        (item?.stack || ['']).map(tech => new FormControl(tech || ''))
+      ),
       achievements: new FormArray(
         (item?.achievements || ['']).map(ach => new FormControl(ach || ''))
       ),
@@ -216,6 +219,7 @@ export class CvFormService {
   experienceFormToModel(formArray: FormArray): ExperienceItem[] {
     return formArray.value.map((item: any) => ({
       ...item,
+      stack: (item.stack || []).filter((s: string) => s.trim() !== ''),
       achievements: item.achievements.filter((a: string) => a.trim() !== ''),
     })) as ExperienceItem[];
   }

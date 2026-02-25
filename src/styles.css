@@ -1,6 +1,170 @@
+@import 'devicon/devicon.min.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --app-bg: #f3f4f6;
+  --app-toolbar-bg: #ffffff;
+  --app-toolbar-border: #e5e7eb;
+  --app-toolbar-text: #111827;
+  --app-button-secondary-bg: #e5e7eb;
+  --app-button-secondary-bg-hover: #d1d5db;
+  --app-button-secondary-text: #111827;
+  --app-button-primary-bg: #2563eb;
+  --app-button-primary-bg-hover: #1d4ed8;
+  --app-button-primary-text: #ffffff;
+
+  --cv-shell-bg: #040a1b;
+  --cv-shell-bg-image: url("/assets/images/blue_bg.png");
+  --cv-shell-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --cv-shell-radius: 0.5rem;
+}
+
+.theme-dark {
+  --app-bg: #0b1220;
+  --app-toolbar-bg: #0f172a;
+  --app-toolbar-border: #1f2937;
+  --app-toolbar-text: #e5e7eb;
+  --app-button-secondary-bg: #1f2937;
+  --app-button-secondary-bg-hover: #374151;
+  --app-button-secondary-text: #e5e7eb;
+  --app-button-primary-bg: #1d4ed8;
+  --app-button-primary-bg-hover: #1e40af;
+  --app-button-primary-text: #eff6ff;
+}
+
+.theme-dark body {
+  color: #e5e7eb;
+}
+
+/* Dark-mode overrides for the app chrome/editor UI.
+   Keep the CV preview card itself unchanged. */
+.theme-dark :where(.bg-white, .bg-gray-50, .bg-gray-100):not(.cv-shell):not(.cv-shell *) {
+  background-color: #111827 !important;
+}
+
+.theme-dark :where(.bg-gray-200):not(.cv-shell):not(.cv-shell *) {
+  background-color: #1f2937 !important;
+}
+
+.theme-dark :where(.border-gray-100, .border-gray-200, .border-gray-300):not(.cv-shell):not(.cv-shell *) {
+  border-color: #374151 !important;
+}
+
+.theme-dark :where(.text-gray-900, .text-gray-800):not(.cv-shell):not(.cv-shell *) {
+  color: #f9fafb !important;
+}
+
+.theme-dark :where(.text-gray-700, .text-gray-600):not(.cv-shell):not(.cv-shell *) {
+  color: #d1d5db !important;
+}
+
+.theme-dark :where(.text-gray-500, .text-gray-400):not(.cv-shell):not(.cv-shell *) {
+  color: #9ca3af !important;
+}
+
+.theme-dark :where(input, textarea, select):not(.cv-shell):not(.cv-shell *) {
+  background-color: #0f172a;
+  color: #e5e7eb;
+  border-color: #374151;
+}
+
+.theme-dark :where(input, textarea, select)::placeholder {
+  color: #9ca3af;
+}
+
+.theme-dark :where(.shadow, .shadow-sm, .shadow-lg, .shadow-xl):not(.cv-shell):not(.cv-shell *) {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.35) !important;
+}
+
+.theme-dark :where(.bg-red-100):not(.cv-shell):not(.cv-shell *) {
+  background-color: rgb(127 29 29 / 0.35) !important;
+}
+
+.theme-dark :where(.text-red-700):not(.cv-shell):not(.cv-shell *) {
+  color: #fca5a5 !important;
+}
+
+.theme-dark :where(label, legend):not(.cv-shell *),
+.theme-dark :where(h1, h2, h3, h4, h5, h6):not(.cv-shell *):not(.app-toolbar-title) {
+  color: inherit;
+}
+
+.app-page {
+  min-height: 100vh;
+  background: var(--app-bg);
+}
+
+.app-toolbar {
+  background: var(--app-toolbar-bg);
+  border-bottom: 1px solid var(--app-toolbar-border);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06);
+  padding: 1rem;
+}
+
+.app-toolbar-inner {
+  max-width: 80rem;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.app-toolbar-title {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: var(--app-toolbar-text);
+}
+
+.app-toolbar-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.app-btn {
+  border: 0;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.app-btn-secondary {
+  background: var(--app-button-secondary-bg);
+  color: var(--app-button-secondary-text);
+}
+
+.app-btn-secondary:hover {
+  background: var(--app-button-secondary-bg-hover);
+}
+
+.app-btn-primary {
+  background: var(--app-button-primary-bg);
+  color: var(--app-button-primary-text);
+}
+
+.app-btn-primary:hover {
+  background: var(--app-button-primary-bg-hover);
+}
+
+.cv-shell {
+  background-color: var(--cv-shell-bg);
+  background-image: var(--cv-shell-bg-image);
+  background-repeat: no-repeat;
+  background-position: right bottom -200px;
+  box-shadow: var(--cv-shell-shadow);
+  border-radius: var(--cv-shell-radius);
+  padding: 2rem;
+  max-width: 900px;
+  margin-inline: auto;
+}
 
 @media print {
   @page { size: A4; margin: 0; }
@@ -8,6 +172,19 @@
   html, body {
     margin: 0 !important;
     padding: 0 !important;
+  }
+
+  .app-page {
+    background: #fff !important;
+  }
+
+  .cv-shell {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: 210mm !important;
+    max-width: none !important;
+    min-height: 297mm;
+    margin: 0 !important;
   }
 
   * {
@@ -45,20 +222,33 @@
     background: transparent !important;
   }
 
-  .cv-grid, .cv-main, .cv-sidebar {
+  .cv-grid, .cv-main{
+    position: relative;
     transform: none !important;
   }
 
-  /* sidebar — як було */
-  .cv-sidebar {
-    position: fixed;
-    top: 15%;
+  /* Chrome print pagination does not fragment grid items reliably.
+     Use block flow for the classic template so experience starts on page 1. */
+  .cv-template-classic .cv-grid {
+    display: block !important;
+  }
+
+  .cv-template-classic .cv-main {
+    display: block !important;
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .cv-template-classic .cv-sidebar {
+    transform: none !important;
+    position: fixed !important;
+    top: 5%;
     right: 5%;
     width: 25%;
     z-index: 2;
   }
 
-  .cv-main {
+  .cv-template-classic .cv-main {
     padding-right: calc(25% + 5%);
   }
 

@@ -2,6 +2,7 @@ import {Component, inject, ViewChild} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { CvStoreService } from '../../services/cv-store.service';
+import { ThemeService } from '../../services/theme.service';
 import { JsonImportModalComponent } from '../json-import-modal/json-import-modal.component';
 
 @Component({
@@ -14,6 +15,7 @@ export class ToolbarComponent {
   @ViewChild('importModal') importModal!: JsonImportModalComponent;
 
   public store = inject(CvStoreService);
+  public theme = inject(ThemeService);
   private router = inject(Router);
 
   onTemplateChange(event: Event): void {
@@ -55,5 +57,4 @@ export class ToolbarComponent {
     this.router.navigate(['/preview']);
   }
 }
-
 

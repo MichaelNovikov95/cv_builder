@@ -16,11 +16,8 @@ export class CvTemplateTwoColumnComponent {
   cv = this.store.cv;
   sortedExperience = this.store.sortedExperience;
   sortedEducation = this.store.sortedEducation;
-  sortedProjects = this.store.sortedProjects;
   sortedCertifications = this.store.sortedCertifications;
 
   formatDate = formatDate;
   formatDateRange = formatDateRange;
 }
-
-

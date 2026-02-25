@@ -19,6 +19,7 @@ export interface ExperienceItem {
   endDate?: string;
   current: boolean;
   location?: string;
+  stack?: string[];
   achievements: string[];
 }
 
@@ -107,5 +108,4 @@ export interface CvUiState {
 }
 
 export type CvTemplate = 'classic' | 'twocol';
-
 

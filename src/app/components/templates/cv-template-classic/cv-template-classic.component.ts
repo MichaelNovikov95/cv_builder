@@ -1,7 +1,8 @@
-import {Component, computed, inject} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CvStoreService } from '../../../services/cv-store.service';
-import { formatDate, formatDateRange } from '../../../utils/date.util';
+import { TechStackIconService } from '../../../services/tech-stack-icon.service';
+import { formatDateRange } from '../../../utils/date.util';
 
 @Component({
   selector: 'app-cv-template-classic',
@@ -12,19 +13,14 @@ import { formatDate, formatDateRange } from '../../../utils/date.util';
 })
 export class CvTemplateClassicComponent {
   public store = inject(CvStoreService);
+  public techStackIcons = inject(TechStackIconService);
 
   cv = this.store.cv;
   sortedExperience = this.store.sortedExperience;
-  // sortedEducation = this.store.sortedEducation;
-  // sortedProjects = this.store.sortedProjects;
-  // sortedCertifications = this.store.sortedCertifications;
 
   allSkills(): string[] {
     return this.cv().skills.flatMap(group => group.items);
   }
 
-  // formatDate = formatDate;
   formatDateRange = formatDateRange;
 }
-
-
