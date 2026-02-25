@@ -1,7 +1,9 @@
 import {Component, inject, Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CvFormService } from '../../../services/cv-form.service';
+import { TechStackIconService } from '../../../services/tech-stack-icon.service';
+import { I18nService } from '../../../services/i18n.service';
 import { ReorderButtonsComponent } from '../../reorder-buttons/reorder-buttons.component';
 
 @Component({
@@ -12,6 +14,9 @@ import { ReorderButtonsComponent } from '../../reorder-buttons/reorder-buttons.c
 })
 export class ProjectsStepComponent {
   public formService = inject(CvFormService);
+  public techStackIconService = inject(TechStackIconService);
+  public i18n = inject(I18nService);
+  readonly techOptions = this.techStackIconService.getTechOptions();
   @Input() formArray!: FormArray;
 
   get projectsArray(): FormArray {
@@ -62,6 +67,13 @@ export class ProjectsStepComponent {
     const highlights = project.get('highlights') as FormArray;
     this.formService.removeBullet(highlights, index);
   }
+
+  showControlError(control: AbstractControl | null, errorCode?: string): boolean {
+    if (!control) {
+      return false;
+    }
+
+    const interacted = control.touched || control.dirty;
+    return interacted && (errorCode ? control.hasError(errorCode) : control.invalid);
+  }
 }
-
-

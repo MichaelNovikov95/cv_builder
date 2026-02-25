@@ -1,10 +1,10 @@
 <div class="space-y-4" [formGroup]="form">
-  <h2 class="text-2xl font-semibold mb-4">Profile Information</h2>
+  <h2 class="text-2xl font-semibold mb-4">{{ i18n.t('form.profile.sectionTitle') }}</h2>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <div class="md:col-span-2">
       <label class="block text-sm font-medium text-gray-700 mb-1">
-        Full Name <span class="text-red-500">*</span>
+        {{ i18n.t('form.profile.nameLabel') }} <span class="text-red-500">*</span>
       </label>
       <input
         type="text"
@@ -15,31 +15,31 @@
         *ngIf="form.get('name')?.invalid && form.get('name')?.touched"
         class="mt-1 text-sm text-red-600"
       >
-        Name is required
+        {{ i18n.t('form.profile.nameRequired') }}
       </div>
     </div>
 
     <div class="md:col-span-2">
       <label class="block text-sm font-medium text-gray-700 mb-1">
-        Professional Title <span class="text-red-500">*</span>
+        {{ i18n.t('form.profile.titleLabel') }} <span class="text-red-500">*</span>
       </label>
       <input
         type="text"
         formControlName="title"
-        placeholder="e.g., Senior Software Engineer"
+        [placeholder]="i18n.t('form.profile.titlePlaceholder')"
         class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <div
         *ngIf="form.get('title')?.invalid && form.get('title')?.touched"
         class="mt-1 text-sm text-red-600"
       >
-        Title is required
+        {{ i18n.t('form.profile.titleRequired') }}
       </div>
     </div>
 
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1">
-        Email <span class="text-red-500">*</span>
+        {{ i18n.t('form.profile.emailLabel') }} <span class="text-red-500">*</span>
       </label>
       <input
         type="email"
@@ -50,65 +50,103 @@
         *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
         class="mt-1 text-sm text-red-600"
       >
-        Valid email is required
+        {{ i18n.t('form.profile.emailRequired') }}
       </div>
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('form.profile.phoneLabel') }}</label>
       <input
         type="tel"
         formControlName="phone"
+        inputmode="numeric"
+        maxlength="19"
+        placeholder="+380 (67) 123-45-67"
+        (input)="onPhoneInput($event)"
         class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
+      <div class="mt-1 text-xs text-gray-500">{{ i18n.t('form.profile.phoneFormatHint') }}</div>
+      <div
+        *ngIf="form.get('phone')?.hasError('pattern') && (form.get('phone')?.dirty || form.get('phone')?.touched)"
+        class="mt-1 text-sm text-red-600"
+      >
+        {{ i18n.t('form.profile.phoneFormatError') }}
+      </div>
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('form.profile.locationLabel') }}</label>
       <input
         type="text"
         formControlName="location"
-        placeholder="e.g., San Francisco, CA"
+        [placeholder]="i18n.t('form.profile.locationPlaceholder')"
         class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Photo URL</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('form.profile.photoLabel') }}</label>
       <input
-        type="url"
-        formControlName="photoUrl"
-        placeholder="https://..."
-        class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        #photoInput
+        type="file"
+        accept="image/*"
+        (change)="onPhotoSelected($event)"
+        [disabled]="hasUploadedPhoto()"
+        class="app-file-upload-input block w-full text-sm text-gray-700"
       />
+      <div class="mt-1 text-xs text-gray-500">{{ i18n.t('form.profile.photoHint') }}</div>
+      <div *ngIf="hasUploadedPhoto()" class="mt-1 text-xs text-amber-600">
+        {{ i18n.t('form.profile.photoMustRemoveHint') }}
+      </div>
+      <div *ngIf="photoUploadError" class="mt-1 text-sm text-red-600">
+        {{ photoUploadError }}
+      </div>
+      <div
+        *ngIf="form.get('photoUrl')?.value"
+        class="mt-3 flex items-center gap-3 rounded border border-gray-200 p-2"
+      >
+        <img
+          [src]="form.get('photoUrl')?.value"
+          [alt]="i18n.t('form.profile.photoPreviewAlt')"
+          class="h-14 w-14 rounded object-cover border border-gray-200"
+        />
+        <div class="flex-1 text-sm text-gray-600">{{ i18n.t('form.profile.photoUploaded') }}</div>
+        <button
+          type="button"
+          (click)="clearPhoto(photoInput)"
+          class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+        >
+          {{ i18n.t('common.remove') }}
+        </button>
+      </div>
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Website</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('form.profile.websiteLabel') }}</label>
       <input
         type="url"
         formControlName="website"
-        placeholder="https://..."
+        [placeholder]="i18n.t('form.profile.websitePlaceholder')"
         class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('form.profile.linkedinLabel') }}</label>
       <input
         type="text"
         formControlName="linkedin"
-        placeholder="linkedin.com/in/username"
+        [placeholder]="i18n.t('form.profile.linkedinPlaceholder')"
         class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">GitHub</label>
+      <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('form.profile.githubLabel') }}</label>
       <input
         type="text"
         formControlName="github"
-        placeholder="github.com/username"
+        [placeholder]="i18n.t('form.profile.githubPlaceholder')"
         class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
@@ -116,19 +154,19 @@
 
   <div>
     <label class="block text-sm font-medium text-gray-700 mb-1">
-      Professional Summary <span class="text-red-500">*</span>
+      {{ i18n.t('form.profile.summaryLabel') }} <span class="text-red-500">*</span>
     </label>
     <textarea
       formControlName="summary"
       rows="5"
-      placeholder="Write a brief summary of your professional background..."
+      [placeholder]="i18n.t('form.profile.summaryPlaceholder')"
       class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
     ></textarea>
     <div
       *ngIf="form.get('summary')?.invalid && form.get('summary')?.touched"
       class="mt-1 text-sm text-red-600"
     >
-      Summary is required
+      {{ i18n.t('form.profile.summaryRequired') }}
     </div>
   </div>
 </div>

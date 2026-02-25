@@ -2,28 +2,35 @@
   <!-- Toolbar (hidden in print) -->
   <div class="app-toolbar print:hidden">
     <div class="app-toolbar-inner">
-      <h1 class="app-toolbar-title">CV Preview</h1>
+      <h1 class="app-toolbar-title">{{ i18n.t('preview.toolbarTitle') }}</h1>
       <div class="app-toolbar-actions">
         <button
           type="button"
           (click)="toggleTheme()"
           class="app-btn app-btn-secondary"
         >
-          {{ theme.isDark() ? 'Light mode' : 'Dark mode' }}
+          {{ theme.isDark() ? i18n.t('theme.lightMode') : i18n.t('theme.darkMode') }}
+        </button>
+        <button
+          type="button"
+          (click)="toggleLocale()"
+          class="app-btn app-btn-secondary"
+        >
+          {{ i18n.localeToggleButtonLabel() }}
         </button>
         <button
           type="button"
           (click)="goBack()"
           class="app-btn app-btn-secondary"
         >
-          Back to Editor
+          {{ i18n.t('preview.backToEditor') }}
         </button>
         <button
           type="button"
           (click)="print()"
           class="app-btn app-btn-primary"
         >
-          Print / Save as PDF
+          {{ i18n.t('preview.printSavePdf') }}
         </button>
       </div>
     </div>

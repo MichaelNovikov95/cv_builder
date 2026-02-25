@@ -209,6 +209,10 @@ export class TechStackIconService {
     return match ?? null;
   }
 
+  getTechOptions(): string[] {
+    return [...this.techAutocompleteOptions];
+  }
+
   private createIcon(tech: string): TechStackIcon {
     const normalized = this.normalize(tech);
     const preset = this.knownIcons[normalized];

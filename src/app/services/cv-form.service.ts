@@ -5,6 +5,8 @@ import {
   FormControl,
   Validators,
   AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
 import {
   CvModel,
@@ -28,7 +30,10 @@ export class CvFormService {
       title: new FormControl(profile.title || '', [Validators.required]),
       photoUrl: new FormControl(profile.photoUrl || ''),
       email: new FormControl(profile.email || '', [Validators.required, Validators.email]),
-      phone: new FormControl(profile.phone || ''),
+      phone: new FormControl(
+        profile.phone || '',
+        [this.optionalPatternValidator(/^\+380\s\(\d{2}\)\s\d{3}-\d{2}-\d{2}$/)]
+      ),
       location: new FormControl(profile.location || ''),
       website: new FormControl(profile.website || ''),
       linkedin: new FormControl(profile.linkedin || ''),
@@ -44,20 +49,25 @@ export class CvFormService {
   }
 
   createExperienceItemForm(item?: ExperienceItem): FormGroup {
-    return new FormGroup({
-      company: new FormControl(item?.company || '', [Validators.required]),
-      role: new FormControl(item?.role || '', [Validators.required]),
-      startDate: new FormControl(item?.startDate || '', [Validators.required]),
-      endDate: new FormControl(item?.endDate || ''),
-      current: new FormControl(item?.current || false),
-      location: new FormControl(item?.location || ''),
-      stack: new FormArray(
-        (item?.stack || ['']).map(tech => new FormControl(tech || ''))
-      ),
-      achievements: new FormArray(
-        (item?.achievements || ['']).map(ach => new FormControl(ach || ''))
-      ),
-    });
+    return new FormGroup(
+      {
+        company: new FormControl(item?.company || '', [Validators.required]),
+        role: new FormControl(item?.role || '', [Validators.required]),
+        startDate: new FormControl(item?.startDate || '', [Validators.required]),
+        endDate: new FormControl(item?.endDate || ''),
+        current: new FormControl(item?.current || false),
+        location: new FormControl(item?.location || ''),
+        stack: new FormArray(
+          (item?.stack || ['']).map(tech => new FormControl(tech || ''))
+        ),
+        achievements: new FormArray(
+          (item?.achievements || ['']).map(ach => new FormControl(ach || ''))
+        ),
+      },
+      {
+        validators: this.dateOrderValidator('startDate', 'endDate', { skipWhenTrueKey: 'current' }),
+      }
+    );
   }
 
   createEducationForm(education: EducationItem[]): FormArray {
@@ -67,14 +77,19 @@ export class CvFormService {
   }
 
   createEducationItemForm(item?: EducationItem): FormGroup {
-    return new FormGroup({
-      school: new FormControl(item?.school || '', [Validators.required]),
-      degree: new FormControl(item?.degree || '', [Validators.required]),
-      field: new FormControl(item?.field || ''),
-      startDate: new FormControl(item?.startDate || '', [Validators.required]),
-      endDate: new FormControl(item?.endDate || ''),
-      notes: new FormControl(item?.notes || ''),
-    });
+    return new FormGroup(
+      {
+        school: new FormControl(item?.school || '', [Validators.required]),
+        degree: new FormControl(item?.degree || '', [Validators.required]),
+        field: new FormControl(item?.field || ''),
+        startDate: new FormControl(item?.startDate || '', [Validators.required]),
+        endDate: new FormControl(item?.endDate || ''),
+        notes: new FormControl(item?.notes || ''),
+      },
+      {
+        validators: this.dateOrderValidator('startDate', 'endDate'),
+      }
+    );
   }
 
   createSkillsForm(skills: SkillsGroup[]): FormArray {
@@ -123,14 +138,19 @@ export class CvFormService {
   }
 
   createCertificationItemForm(item?: CertificationItem): FormGroup {
-    return new FormGroup({
-      name: new FormControl(item?.name || '', [Validators.required]),
-      issuer: new FormControl(item?.issuer || '', [Validators.required]),
-      date: new FormControl(item?.date || '', [Validators.required]),
-      expiryDate: new FormControl(item?.expiryDate || ''),
-      credentialId: new FormControl(item?.credentialId || ''),
-      url: new FormControl(item?.url || ''),
-    });
+    return new FormGroup(
+      {
+        name: new FormControl(item?.name || '', [Validators.required]),
+        issuer: new FormControl(item?.issuer || '', [Validators.required]),
+        date: new FormControl(item?.date || '', [Validators.required]),
+        expiryDate: new FormControl(item?.expiryDate || ''),
+        credentialId: new FormControl(item?.credentialId || ''),
+        url: new FormControl(item?.url || ''),
+      },
+      {
+        validators: this.dateOrderValidator('date', 'expiryDate'),
+      }
+    );
   }
 
   createLanguagesForm(languages: LanguageItem[]): FormArray {
@@ -257,6 +277,39 @@ export class CvFormService {
       interests: value.interests.filter((i: string) => i.trim() !== ''),
       volunteering: value.volunteering,
       awards: value.awards,
+    };
+  }
+
+  private optionalPatternValidator(pattern: RegExp): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = String(control.value ?? '').trim();
+      if (!value) {
+        return null;
+      }
+
+      return pattern.test(value) ? null : { pattern: true };
+    };
+  }
+
+  private dateOrderValidator(
+    startKey: string,
+    endKey: string,
+    options?: { skipWhenTrueKey?: string }
+  ): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const group = control as FormGroup;
+      const start = String(group.get(startKey)?.value ?? '').trim();
+      const end = String(group.get(endKey)?.value ?? '').trim();
+
+      if (!start || !end) {
+        return null;
+      }
+
+      if (options?.skipWhenTrueKey && group.get(options.skipWhenTrueKey)?.value) {
+        return null;
+      }
+
+      return start <= end ? null : { dateOrder: { startKey, endKey } };
     };
   }
 }

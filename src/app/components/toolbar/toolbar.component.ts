@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { CvStoreService } from '../../services/cv-store.service';
 import { ThemeService } from '../../services/theme.service';
+import { I18nService } from '../../services/i18n.service';
 import { JsonImportModalComponent } from '../json-import-modal/json-import-modal.component';
 
 @Component({
@@ -16,6 +17,7 @@ export class ToolbarComponent {
 
   public store = inject(CvStoreService);
   public theme = inject(ThemeService);
+  public i18n = inject(I18nService);
   private router = inject(Router);
 
   onTemplateChange(event: Event): void {
@@ -24,13 +26,13 @@ export class ToolbarComponent {
   }
 
   loadDemo(): void {
-    if (confirm('This will replace your current CV with demo data. Continue?')) {
+    if (confirm(this.i18n.t('toolbar.confirmLoadDemo'))) {
       this.store.resetToDemo();
     }
   }
 
   clearData(): void {
-    if (confirm('This will remove current CV data from the page. Continue?')) {
+    if (confirm(this.i18n.t('toolbar.confirmClearData'))) {
       this.store.resetToEmpty();
     }
   }
@@ -61,5 +63,9 @@ export class ToolbarComponent {
 
   goToPreview(): void {
     this.router.navigate(['/preview']);
+  }
+
+  toggleLocale(): void {
+    this.i18n.toggleLocale();
   }
 }

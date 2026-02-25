@@ -263,7 +263,7 @@ export class CvStoreService {
         title: 'Senior Full Stack Developer',
         photoUrl: 'https://placebear.com/400/300',
         email: 'john.doe@example.com',
-        phone: '+1 (555) 123-4567',
+        phone: '+380 (67) 123-45-67',
         location: 'San Francisco, CA',
         website: 'https://johndoe.dev',
         linkedin: 'linkedin.com/in/johndoe',
