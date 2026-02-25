@@ -80,7 +80,10 @@
   </div>
 
   <!-- Preview Panel -->
-  <div class="flex-1 lg:w-1/2 overflow-y-auto bg-gray-100 p-6 border-t lg:border-t-0 lg:border-l border-gray-300">
+  <div
+    *ngIf="hasPreviewData()"
+    class="flex-1 lg:w-1/2 overflow-y-auto bg-gray-100 p-6 border-t lg:border-t-0 lg:border-l border-gray-300"
+  >
     <div class="max-w-2xl mx-auto">
       <h2 class="text-xl font-semibold mb-4">Live Preview</h2>
       <app-cv-preview></app-cv-preview>

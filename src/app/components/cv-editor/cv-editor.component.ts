@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, effect, inject} from '@angular/core';
+import {Component, OnInit, OnDestroy, computed, effect, inject, untracked} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormGroup,
@@ -68,6 +68,37 @@ export class CvEditorComponent implements OnInit, OnDestroy {
   activeStep = 0;
   cvForm!: FormGroup;
   private formSubscription?: Subscription;
+  readonly hasPreviewData = computed(() => {
+    const cv = this.store.cv();
+
+    const hasProfileData = [
+      cv.profile.name,
+      cv.profile.title,
+      cv.profile.photoUrl,
+      cv.profile.email,
+      cv.profile.phone,
+      cv.profile.location,
+      cv.profile.website,
+      cv.profile.linkedin,
+      cv.profile.github,
+      cv.profile.summary,
+    ].some(value => this.hasText(value));
+
+    const hasSectionItems =
+      cv.experience.length > 0 ||
+      cv.education.length > 0 ||
+      cv.skills.length > 0 ||
+      cv.projects.length > 0 ||
+      cv.certifications.length > 0 ||
+      cv.languages.length > 0;
+
+    const hasAdditionalData =
+      (cv.additional.interests?.length ?? 0) > 0 ||
+      (cv.additional.volunteering?.length ?? 0) > 0 ||
+      (cv.additional.awards?.length ?? 0) > 0;
+
+    return hasProfileData || hasSectionItems || hasAdditionalData;
+  });
 
   get profileForm(): FormGroup {
     return this.cvForm.get('profile') as FormGroup;
@@ -105,9 +136,18 @@ export class CvEditorComponent implements OnInit, OnDestroy {
     this.activeStep = this.store.ui().activeStep;
   });
 
+  private readonly syncExternalCvReplacements = effect(() => {
+    this.store.cvReplacementVersion();
+
+    if (!this.cvForm) {
+      return;
+    }
+
+    untracked(() => this.rebuildFormFromStore());
+  });
+
   ngOnInit(): void {
-    this.buildForm();
-    this.subscribeToFormChanges();
+    this.rebuildFormFromStore();
   }
 
   ngOnDestroy(): void {
@@ -129,6 +169,7 @@ export class CvEditorComponent implements OnInit, OnDestroy {
   }
 
   subscribeToFormChanges(): void {
+    this.formSubscription?.unsubscribe();
     this.formSubscription = this.cvForm.valueChanges
       .pipe(debounceTime(150))
       .subscribe(() => {
@@ -163,6 +204,13 @@ export class CvEditorComponent implements OnInit, OnDestroy {
   goToStep(step: number): void {
     this.store.setActiveStep(step);
   }
+
+  private rebuildFormFromStore(): void {
+    this.buildForm();
+    this.subscribeToFormChanges();
+  }
+
+  private hasText(value?: string): boolean {
+    return Boolean(value?.trim());
+  }
 }
-
-

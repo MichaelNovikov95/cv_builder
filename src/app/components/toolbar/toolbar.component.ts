@@ -29,6 +29,12 @@ export class ToolbarComponent {
     }
   }
 
+  clearData(): void {
+    if (confirm('This will remove current CV data from the page. Continue?')) {
+      this.store.resetToEmpty();
+    }
+  }
+
   exportJson(): void {
     const json = this.store.exportJson();
     const blob = new Blob([json], { type: 'application/json' });
@@ -57,4 +63,3 @@ export class ToolbarComponent {
     this.router.navigate(['/preview']);
   }
 }
-

@@ -55,6 +55,7 @@ export class CvStoreService {
   readonly cv = signal<CvModel>(initialCv);
   readonly template = signal<CvTemplate>('classic');
   readonly ui = signal<CvUiState>(initialUiState);
+  readonly cvReplacementVersion = signal(0);
 
   readonly sortedExperience = computed(() => {
     return [...this.cv().experience].reverse(); // Most recent first
@@ -144,6 +145,7 @@ export class CvStoreService {
           if (data.ui) {
             this.ui.set({ ...initialUiState, ...data.ui });
           }
+          this.bumpCvReplacementVersion();
         } else {
           console.warn('Schema version mismatch, using defaults');
         }
@@ -171,6 +173,22 @@ export class CvStoreService {
 
   patchCv(partial: Partial<CvModel>): void {
     this.cv.update(current => ({ ...current, ...partial }));
+  }
+
+  resetToEmpty(): void {
+    this.cv.set({
+      ...initialCv,
+      profile: { ...initialCv.profile },
+      experience: [],
+      education: [],
+      skills: [],
+      projects: [],
+      certifications: [],
+      languages: [],
+      additional: {},
+    });
+    this.setActiveStep(0);
+    this.bumpCvReplacementVersion();
   }
 
   setTemplate(template: CvTemplate): void {
@@ -230,6 +248,7 @@ export class CvStoreService {
       };
 
       this.cv.set(this.normalizeCv(imported));
+      this.bumpCvReplacementVersion();
       return { success: true };
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : 'Invalid JSON' };
@@ -497,11 +516,17 @@ export class CvStoreService {
     this.cv.set(demoCv);
     this.template.set('classic');
     this.ui.set(initialUiState);
+    this.bumpCvReplacementVersion();
   }
 
   reset(): void {
     this.cv.set(initialCv);
     this.template.set('classic');
     this.ui.set(initialUiState);
+    this.bumpCvReplacementVersion();
+  }
+
+  private bumpCvReplacementVersion(): void {
+    this.cvReplacementVersion.update(version => version + 1);
   }
 }

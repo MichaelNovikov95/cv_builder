@@ -8,7 +8,7 @@ const THEME_STORAGE_KEY = 'previewThemeMode';
   providedIn: 'root',
 })
 export class ThemeService {
-  readonly mode = signal<ThemeMode>('light');
+  readonly mode = signal<ThemeMode>('dark');
   readonly isDark = computed(() => this.mode() === 'dark');
 
   constructor() {
