@@ -4,3 +4,39 @@
 .cv-template-twocol.compact h2 {
   margin-bottom: 0.75rem;
 }
+
+.project-links-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.project-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  flex: 0 0 auto;
+  padding: 0.3rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid #dbe3ee;
+  background: #f8fafc;
+  text-decoration: none;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.project-link-chip:hover {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+}
+
+.project-link-chip-label {
+  font-size: 0.7rem;
+  line-height: 1rem;
+  font-weight: 700;
+  color: #1d4ed8;
+  white-space: nowrap;
+}

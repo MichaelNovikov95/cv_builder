@@ -78,3 +78,37 @@
 .classic-tech-glyph-fg.devicon-amazonwebservices-plain-wordmark {
   color: var(--classic-accent);
 }
+
+.classic-project-links-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.35rem;
+  min-width: 0;
+  overflow: hidden;
+  margin-top: 0.15rem;
+}
+
+.classic-project-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 0;
+  flex: 0 0 auto;
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgb(54 212 247 / 0.35);
+  background: rgb(54 212 247 / 0.06);
+  text-decoration: none;
+}
+
+.classic-project-link-chip:hover {
+  background: rgb(54 212 247 / 0.12);
+}
+
+.classic-project-link-label {
+  color: var(--classic-accent);
+  font-size: 7px;
+  font-weight: 700;
+  white-space: nowrap;
+}

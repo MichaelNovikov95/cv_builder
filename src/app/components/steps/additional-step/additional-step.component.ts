@@ -1,6 +1,6 @@
 import {Component, inject, Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CvFormService } from '../../../services/cv-form.service';
 
 @Component({
@@ -50,6 +50,14 @@ export class AdditionalStepComponent {
   removeAward(index: number): void {
     this.awardsArray.removeAt(index);
   }
-}
 
+  showControlError(control: AbstractControl | null, errorCode?: string): boolean {
+    if (!control) {
+      return false;
+    }
+
+    const interacted = control.touched || control.dirty;
+    return interacted && (errorCode ? control.hasError(errorCode) : control.invalid);
+  }
+}
 

@@ -1,6 +1,6 @@
 import {Component, inject, Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CvFormService } from '../../../services/cv-form.service';
 
 @Component({
@@ -25,6 +25,23 @@ export class CertificationsStepComponent {
   removeCertification(index: number): void {
     this.certificationsArray.removeAt(index);
   }
-}
 
+  showControlError(control: AbstractControl | null, errorCode?: string): boolean {
+    if (!control) {
+      return false;
+    }
+
+    const interacted = control.touched || control.dirty;
+    return interacted && (errorCode ? control.hasError(errorCode) : control.invalid);
+  }
+
+  showDateOrderError(cert: AbstractControl): boolean {
+    const group = cert as FormGroup;
+    const date = group.get('date');
+    const expiryDate = group.get('expiryDate');
+    return Boolean(group.errors?.['dateOrder']) && Boolean(
+      group.touched || group.dirty || date?.touched || expiryDate?.touched || date?.dirty || expiryDate?.dirty
+    );
+  }
+}
 

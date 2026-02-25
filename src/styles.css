@@ -5,6 +5,7 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light;
   --app-bg: #f3f4f6;
   --app-toolbar-bg: #ffffff;
   --app-toolbar-border: #e5e7eb;
@@ -23,6 +24,7 @@
 }
 
 .theme-dark {
+  color-scheme: dark;
   --app-bg: #0b1220;
   --app-toolbar-bg: #0f172a;
   --app-toolbar-border: #1f2937;
@@ -73,6 +75,71 @@
 
 .theme-dark :where(input, textarea, select)::placeholder {
   color: #9ca3af;
+}
+
+:where(input, textarea, select).ng-invalid.ng-touched:not(form),
+:where(input, textarea, select).ng-invalid.ng-dirty:not(form) {
+  border-color: #dc2626 !important;
+}
+
+:where(input, textarea, select).ng-invalid.ng-touched:focus,
+:where(input, textarea, select).ng-invalid.ng-dirty:focus {
+  --tw-ring-color: rgb(220 38 38 / 0.25);
+}
+
+.app-file-upload-input {
+  color: #374151;
+}
+
+.app-file-upload-input::file-selector-button {
+  margin-right: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: #f3f4f6;
+  color: #111827;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.app-file-upload-input::file-selector-button:hover {
+  background-color: #e5e7eb;
+}
+
+.theme-dark .app-file-upload-input {
+  color: #d1d5db;
+}
+
+.theme-dark .app-file-upload-input::file-selector-button {
+  border-color: #374151;
+  background-color: #1f2937;
+  color: #e5e7eb;
+}
+
+.theme-dark .app-file-upload-input::file-selector-button:hover {
+  background-color: #374151;
+}
+
+.app-file-upload-input:disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.app-file-upload-input:disabled::file-selector-button {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  opacity: 0.75;
+  filter: grayscale(1);
+}
+
+.theme-dark input[type='date']::-webkit-calendar-picker-indicator {
+  opacity: 0.9;
+  filter: invert(1) grayscale(1);
 }
 
 .theme-dark :where(.shadow, .shadow-sm, .shadow-lg, .shadow-xl):not(.cv-shell):not(.cv-shell *) {

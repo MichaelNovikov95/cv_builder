@@ -1,17 +1,17 @@
 <div class="space-y-4">
   <div class="flex items-center justify-between mb-4">
-    <h2 class="text-2xl font-semibold">Work Experience</h2>
+    <h2 class="text-2xl font-semibold">{{ i18n.t('form.experience.sectionTitle') }}</h2>
     <button
       type="button"
       (click)="addExperience()"
       class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded text-sm"
     >
-      + Add Experience
+      {{ i18n.t('form.experience.addButton') }}
     </button>
   </div>
 
   <div *ngIf="experienceArray.length === 0" class="text-gray-500 text-center py-8">
-    No experience entries yet. Click "Add Experience" to get started.
+    {{ i18n.t('form.experience.empty') }}
   </div>
 
   <div
@@ -19,7 +19,7 @@
     class="border border-gray-200 rounded-lg p-4 space-y-4"
   >
     <div class="flex items-start justify-between">
-      <h3 class="text-lg font-semibold">Experience #{{ i + 1 }}</h3>
+      <h3 class="text-lg font-semibold">{{ i18n.t('form.experience.itemPrefix') }}{{ i + 1 }}</h3>
       <div class="flex items-center gap-2">
         <app-reorder-buttons
           [canMoveUp]="i > 0"
@@ -32,7 +32,7 @@
           (click)="removeExperience(i)"
           class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
         >
-          Remove
+          {{ i18n.t('common.remove') }}
         </button>
       </div>
     </div>
@@ -41,45 +41,56 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Company <span class="text-red-500">*</span>
+            {{ i18n.t('form.experience.companyLabel') }} <span class="text-red-500">*</span>
           </label>
           <input
             type="text"
             formControlName="company"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <div *ngIf="showControlError($any(exp).get('company'), 'required')" class="mt-1 text-sm text-red-600">
+            {{ i18n.t('form.experience.companyRequired') }}
+          </div>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Role <span class="text-red-500">*</span>
+            {{ i18n.t('form.experience.roleLabel') }} <span class="text-red-500">*</span>
           </label>
           <input
             type="text"
             formControlName="role"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <div *ngIf="showControlError($any(exp).get('role'), 'required')" class="mt-1 text-sm text-red-600">
+            {{ i18n.t('form.experience.roleRequired') }}
+          </div>
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Start Date <span class="text-red-500">*</span>
+            {{ i18n.t('form.experience.startDateLabel') }} <span class="text-red-500">*</span>
           </label>
           <input
             type="date"
             formControlName="startDate"
+            [attr.max]="!exp.get('current')?.value ? (exp.get('endDate')?.value || null) : null"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <div *ngIf="showControlError($any(exp).get('startDate'), 'required')" class="mt-1 text-sm text-red-600">
+            {{ i18n.t('form.experience.startDateRequired') }}
+          </div>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('form.experience.endDateLabel') }}</label>
           <input
             type="date"
             formControlName="endDate"
             [disabled]="exp.get('current')?.value"
+            [attr.min]="exp.get('startDate')?.value || null"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('form.experience.locationLabel') }}</label>
           <input
             type="text"
             formControlName="location"
@@ -94,40 +105,34 @@
               (change)="onCurrentChange($any(exp))"
               class="w-4 h-4"
             />
-            <span class="text-sm text-gray-700">Current Position</span>
+            <span class="text-sm text-gray-700">{{ i18n.t('form.experience.currentPosition') }}</span>
           </label>
         </div>
       </div>
+      <div *ngIf="showDateOrderError($any(exp))" class="text-sm text-red-600">
+        {{ i18n.t('form.experience.dateOrderError') }}
+      </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Technology Stack</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('form.experience.techStackLabel') }}</label>
         <div formArrayName="stack" class="space-y-2">
           <div
             *ngFor="let item of getStack($any(exp)).controls; let j = index"
             class="flex gap-2"
           >
-            <div class="relative flex-1">
-              <div
-                *ngIf="getStackSuggestion($any(item)) as suggestion"
-                class="pointer-events-none absolute inset-0 flex items-center px-3 text-gray-400 whitespace-pre z-10"
-                aria-hidden="true"
-              >
-                <span class="invisible">{{ $any(item).value || '' }}</span><span>{{ suggestion.slice(($any(item).value || '').length) }}</span>
-              </div>
-              <input
-                type="text"
-                [formControl]="$any(item)"
-                (keydown.tab)="acceptStackSuggestion($event, $any(item))"
-                placeholder="e.g. React, Next.js, Node.js..."
-                class="relative z-20 w-full px-3 py-2 border border-gray-300 rounded bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <select
+              [formControl]="$any(item)"
+              class="flex-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">{{ i18n.t('common.selectTechnology') }}</option>
+              <option *ngFor="let option of techOptions" [value]="option">{{ option }}</option>
+            </select>
             <button
               type="button"
               (click)="removeStackItem($any(exp), j)"
               class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
             >
-              Remove
+              {{ i18n.t('common.remove') }}
             </button>
           </div>
           <button
@@ -135,13 +140,13 @@
             (click)="addStackItem($any(exp))"
             class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
           >
-            + Add Technology
+            {{ i18n.t('form.experience.addTechnology') }}
           </button>
         </div>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Achievements</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('form.experience.achievementsLabel') }}</label>
         <div formArrayName="achievements" class="space-y-2">
           <div
             *ngFor="let bullet of getAchievements($any(exp)).controls; let j = index"
@@ -150,7 +155,7 @@
             <input
               type="text"
               [formControl]="$any(bullet)"
-              placeholder="Enter achievement..."
+              [placeholder]="i18n.t('form.experience.achievementPlaceholder')"
               class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -158,7 +163,7 @@
               (click)="removeBullet($any(exp), j)"
               class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
             >
-              Remove
+              {{ i18n.t('common.remove') }}
             </button>
           </div>
           <button
@@ -166,7 +171,7 @@
             (click)="addBullet($any(exp))"
             class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
           >
-            + Add Achievement
+            {{ i18n.t('form.experience.addAchievement') }}
           </button>
         </div>
       </div>

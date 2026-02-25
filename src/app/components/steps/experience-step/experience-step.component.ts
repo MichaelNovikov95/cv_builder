@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CvFormService } from '../../../services/cv-form.service';
 import { TechStackIconService } from '../../../services/tech-stack-icon.service';
+import { I18nService } from '../../../services/i18n.service';
 import { ReorderButtonsComponent } from '../../reorder-buttons/reorder-buttons.component';
 
 @Component({
@@ -14,6 +15,8 @@ import { ReorderButtonsComponent } from '../../reorder-buttons/reorder-buttons.c
 export class ExperienceStepComponent {
   public formService = inject(CvFormService);
   public techStackIconService = inject(TechStackIconService);
+  public i18n = inject(I18nService);
+  readonly techOptions = this.techStackIconService.getTechOptions();
   @Input() formArray!: FormArray;
 
   get experienceArray(): FormArray {
@@ -65,26 +68,27 @@ export class ExperienceStepComponent {
     this.formService.removeBullet(stack, index);
   }
 
-  getStackSuggestion(control: AbstractControl): string | null {
-    const value = String(control.value ?? '');
-    return this.techStackIconService.suggestTechName(value);
-  }
-
-  acceptStackSuggestion(event: Event, control: AbstractControl): void {
-    const suggestion = this.getStackSuggestion(control);
-    if (!suggestion) {
-      return;
-    }
-
-    event.preventDefault();
-    control.setValue(suggestion);
-    control.markAsDirty();
-    control.markAsTouched();
-  }
-
   onCurrentChange(exp: FormGroup): void {
     if (exp.get('current')?.value) {
       exp.get('endDate')?.setValue('');
     }
+  }
+
+  showControlError(control: AbstractControl | null, errorCode?: string): boolean {
+    if (!control) {
+      return false;
+    }
+
+    const interacted = control.touched || control.dirty;
+    return interacted && (errorCode ? control.hasError(errorCode) : control.invalid);
+  }
+
+  showDateOrderError(exp: AbstractControl): boolean {
+    const group = exp as FormGroup;
+    const startDate = group.get('startDate');
+    const endDate = group.get('endDate');
+    return Boolean(group.errors?.['dateOrder']) && Boolean(
+      group.touched || group.dirty || startDate?.touched || endDate?.touched || startDate?.dirty || endDate?.dirty
+    );
   }
 }

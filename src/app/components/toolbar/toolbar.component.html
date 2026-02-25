@@ -2,14 +2,21 @@
   <div class="max-w-7xl mx-auto px-4 py-3">
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-4">
-        <h1 class="text-xl font-bold text-gray-900">CV Builder</h1>
+        <h1 class="text-xl font-bold text-gray-900">{{ i18n.t('toolbar.title') }}</h1>
         <div class="flex items-center gap-2">
           <button
           type="button"
           (click)="theme.toggle()"
           class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
         >
-          {{ theme.isDark() ? 'Light mode' : 'Dark mode' }}
+          {{ theme.isDark() ? i18n.t('theme.lightMode') : i18n.t('theme.darkMode') }}
+        </button>
+        <button
+          type="button"
+          (click)="toggleLocale()"
+          class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+        >
+          {{ i18n.localeToggleButtonLabel() }}
         </button>
         </div>
       </div>
@@ -20,35 +27,35 @@
           (click)="loadDemo()"
           class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
         >
-          Load Demo
+          {{ i18n.t('toolbar.loadDemo') }}
         </button>
         <button
           type="button"
           (click)="clearData()"
           class="px-3 py-1.5 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
         >
-          Clear Data
+          {{ i18n.t('toolbar.clearData') }}
         </button>
         <button
           type="button"
           (click)="exportJson()"
           class="px-3 py-1.5 bg-blue-600 text-white hover:bg-blue-700 rounded text-sm"
         >
-          Export JSON
+          {{ i18n.t('toolbar.exportJson') }}
         </button>
         <button
           type="button"
           (click)="openImportModal()"
           class="px-3 py-1.5 bg-green-600 text-white hover:bg-green-700 rounded text-sm"
         >
-          Import JSON
+          {{ i18n.t('toolbar.importJson') }}
         </button>
         <button
           type="button"
           (click)="goToPreview()"
           class="px-3 py-1.5 bg-purple-600 text-white hover:bg-purple-700 rounded text-sm"
         >
-          Print / PDF
+          {{ i18n.t('toolbar.printPdf') }}
         </button>
       </div>
     </div>
@@ -60,7 +67,7 @@
         (click)="store.clearError()"
         class="ml-2 underline"
       >
-        Dismiss
+        {{ i18n.t('toolbar.dismiss') }}
       </button>
     </div>
   </div>

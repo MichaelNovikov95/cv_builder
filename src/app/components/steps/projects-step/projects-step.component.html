@@ -1,17 +1,17 @@
 <div class="space-y-4">
   <div class="flex items-center justify-between mb-4">
-    <h2 class="text-2xl font-semibold">Projects</h2>
+    <h2 class="text-2xl font-semibold">{{ i18n.t('form.projects.sectionTitle') }}</h2>
     <button
       type="button"
       (click)="addProject()"
       class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded text-sm"
     >
-      + Add Project
+      {{ i18n.t('form.projects.addButton') }}
     </button>
   </div>
 
   <div *ngIf="projectsArray.length === 0" class="text-gray-500 text-center py-8">
-    No projects yet. Click "Add Project" to get started.
+    {{ i18n.t('form.projects.empty') }}
   </div>
 
   <div
@@ -19,7 +19,7 @@
     class="border border-gray-200 rounded-lg p-4 space-y-4"
   >
     <div class="flex items-start justify-between">
-      <h3 class="text-lg font-semibold">Project #{{ i + 1 }}</h3>
+      <h3 class="text-lg font-semibold">{{ i18n.t('form.projects.itemPrefix') }}{{ i + 1 }}</h3>
       <div class="flex items-center gap-2">
         <app-reorder-buttons
           [canMoveUp]="i > 0"
@@ -32,7 +32,7 @@
           (click)="removeProject(i)"
           class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
         >
-          Remove
+          {{ i18n.t('common.remove') }}
         </button>
       </div>
     </div>
@@ -41,45 +41,52 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Project Name <span class="text-red-500">*</span>
+            {{ i18n.t('form.projects.nameLabel') }} <span class="text-red-500">*</span>
           </label>
           <input
             type="text"
             formControlName="name"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+          <div *ngIf="showControlError($any(project).get('name'), 'required')" class="mt-1 text-sm text-red-600">
+            {{ i18n.t('form.projects.nameRequired') }}
+          </div>
         </div>
         <div class="md:col-span-2">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Description <span class="text-red-500">*</span>
+            {{ i18n.t('form.projects.descriptionLabel') }} <span class="text-red-500">*</span>
           </label>
           <textarea
             formControlName="description"
             rows="2"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           ></textarea>
+          <div *ngIf="showControlError($any(project).get('description'), 'required')" class="mt-1 text-sm text-red-600">
+            {{ i18n.t('form.projects.descriptionRequired') }}
+          </div>
         </div>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Tech Stack</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('form.projects.techStackLabel') }}</label>
         <div formArrayName="stack" class="space-y-2">
           <div
             *ngFor="let tag of getStack($any(project)).controls; let j = index"
             class="flex gap-2"
           >
-            <input
-              type="text"
+            <select
               [formControl]="$any(tag)"
-              placeholder="Enter technology..."
               class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            >
+              <option value="">{{ i18n.t('common.selectTechnology') }}</option>
+              <option *ngFor="let option of techOptions" [value]="option">{{ option }}</option>
+            </select>
             <button
               type="button"
               (click)="removeStackItem($any(project), j)"
               class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
             >
-              Remove
+              {{ i18n.t('common.remove') }}
             </button>
           </div>
           <button
@@ -87,38 +94,38 @@
             (click)="addStackItem($any(project))"
             class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
           >
-            + Add Technology
+            {{ i18n.t('form.projects.addTechnology') }}
           </button>
         </div>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Links</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('form.projects.linksLabel') }}</label>
         <div formGroupName="links" class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label class="block text-xs text-gray-600 mb-1">Live URL</label>
+            <label class="block text-xs text-gray-600 mb-1">{{ i18n.t('form.projects.liveUrlLabel') }}</label>
             <input
               type="url"
               formControlName="live"
-              placeholder="https://..."
+              [placeholder]="i18n.t('common.urlPlaceholder')"
               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label class="block text-xs text-gray-600 mb-1">GitHub</label>
+            <label class="block text-xs text-gray-600 mb-1">{{ i18n.t('form.projects.githubLabel') }}</label>
             <input
               type="url"
               formControlName="github"
-              placeholder="https://..."
+              [placeholder]="i18n.t('common.urlPlaceholder')"
               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label class="block text-xs text-gray-600 mb-1">Demo</label>
+            <label class="block text-xs text-gray-600 mb-1">{{ i18n.t('form.projects.demoLabel') }}</label>
             <input
               type="url"
               formControlName="demo"
-              placeholder="https://..."
+              [placeholder]="i18n.t('common.urlPlaceholder')"
               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -126,7 +133,7 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Highlights</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('form.projects.highlightsLabel') }}</label>
         <div formArrayName="highlights" class="space-y-2">
           <div
             *ngFor="let highlight of getHighlights($any(project)).controls; let j = index"
@@ -135,7 +142,7 @@
             <input
               type="text"
               [formControl]="$any(highlight)"
-              placeholder="Enter highlight..."
+              [placeholder]="i18n.t('form.projects.highlightPlaceholder')"
               class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
@@ -143,7 +150,7 @@
               (click)="removeHighlight($any(project), j)"
               class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
             >
-              Remove
+              {{ i18n.t('common.remove') }}
             </button>
           </div>
           <button
@@ -151,7 +158,7 @@
             (click)="addHighlight($any(project))"
             class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
           >
-            + Add Highlight
+            {{ i18n.t('form.projects.addHighlight') }}
           </button>
         </div>
       </div>

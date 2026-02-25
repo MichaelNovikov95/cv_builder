@@ -40,6 +40,9 @@
           placeholder="e.g., Frontend, Backend, Tools"
           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        <div *ngIf="showControlError($any(group).get('name'), 'required')" class="mt-1 text-sm text-red-600">
+          Group name is required
+        </div>
       </div>
 
       <div>
@@ -49,12 +52,13 @@
             *ngFor="let skill of getItems($any(group)).controls; let j = index"
             class="flex gap-2"
           >
-            <input
-              type="text"
+            <select
               [formControl]="$any(skill)"
-              placeholder="Enter skill..."
               class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            >
+              <option value="">Select skill</option>
+              <option *ngFor="let option of skillOptions" [value]="option">{{ option }}</option>
+            </select>
             <button
               type="button"
               (click)="removeItem($any(group), j)"

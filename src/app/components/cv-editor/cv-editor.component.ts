@@ -1,6 +1,7 @@
 import {Component, OnInit, OnDestroy, computed, effect, inject, untracked} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  AbstractControl,
   FormGroup,
   FormArray,
   ReactiveFormsModule,
@@ -18,7 +19,7 @@ import { CertificationsStepComponent } from '../steps/certifications-step/certif
 import { LanguagesStepComponent } from '../steps/languages-step/languages-step.component';
 import { AdditionalStepComponent } from '../steps/additional-step/additional-step.component';
 import { CvPreviewComponent } from '../cv-preview/cv-preview.component';
-import { SectionToggleComponent } from '../section-toggle/section-toggle.component';
+import { I18nService } from '../../services/i18n.service';
 import {CvUiState} from '../../models/cv.model';
 
 type StepKey = keyof CvUiState['showSections'];
@@ -32,12 +33,8 @@ interface Step {
 const STEPS: Step[] = [
   { id: 0, name: 'Profile', key: 'profile' },
   { id: 1, name: 'Experience', key: 'experience' },
-  { id: 2, name: 'Education', key: 'education' },
-  { id: 3, name: 'Skills', key: 'skills' },
   { id: 4, name: 'Projects', key: 'projects' },
-  { id: 5, name: 'Certifications', key: 'certifications' },
   { id: 6, name: 'Languages', key: 'languages' },
-  { id: 7, name: 'Additional', key: 'additional' },
 ];
 
 @Component({
@@ -55,18 +52,20 @@ const STEPS: Step[] = [
     LanguagesStepComponent,
     AdditionalStepComponent,
     CvPreviewComponent,
-    SectionToggleComponent,
   ],
   templateUrl: './cv-editor.component.html',
 })
 export class CvEditorComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   public store = inject(CvStoreService);
+  public i18n = inject(I18nService);
   private formService = inject(CvFormService);
 
   steps: Step[] = STEPS;
   activeStep = 0;
   cvForm!: FormGroup;
+  validationNotice: string | null = null;
+  private readonly visibleStepIds = new Set(STEPS.map(step => step.id));
   private formSubscription?: Subscription;
   readonly hasPreviewData = computed(() => {
     const cv = this.store.cv();
@@ -132,8 +131,38 @@ export class CvEditorComponent implements OnInit, OnDestroy {
     return this.cvForm.get('additional') as FormGroup;
   }
 
+  canShowLivePreview(): boolean {
+    return Boolean(this.cvForm) && this.cvForm.valid && this.hasPreviewData();
+  }
+
+  stepLabel(key: StepKey): string {
+    switch (key) {
+      case 'profile':
+        return this.i18n.t('editor.step.profile');
+      case 'experience':
+        return this.i18n.t('editor.step.experience');
+      case 'projects':
+        return this.i18n.t('editor.step.projects');
+      case 'languages':
+        return this.i18n.t('editor.step.languages');
+      default:
+        return key;
+    }
+  }
+
   private readonly syncActiveStep = effect(() => {
-    this.activeStep = this.store.ui().activeStep;
+    const requestedStep = this.store.ui().activeStep;
+    if (this.visibleStepIds.has(requestedStep)) {
+      this.activeStep = requestedStep;
+      return;
+    }
+
+    const fallbackStep = this.steps[0]?.id ?? 0;
+    this.activeStep = fallbackStep;
+
+    if (requestedStep !== fallbackStep) {
+      queueMicrotask(() => this.store.setActiveStep(fallbackStep));
+    }
   });
 
   private readonly syncExternalCvReplacements = effect(() => {
@@ -166,6 +195,11 @@ export class CvEditorComponent implements OnInit, OnDestroy {
       languages: this.formService.createLanguagesForm(cv.languages),
       additional: this.formService.createAdditionalForm(cv.additional),
     });
+
+    this.cvForm.get('education')?.disable({ emitEvent: false });
+    this.cvForm.get('skills')?.disable({ emitEvent: false });
+    this.cvForm.get('certifications')?.disable({ emitEvent: false });
+    this.cvForm.get('additional')?.disable({ emitEvent: false });
   }
 
   subscribeToFormChanges(): void {
@@ -174,7 +208,13 @@ export class CvEditorComponent implements OnInit, OnDestroy {
       .pipe(debounceTime(150))
       .subscribe(() => {
         if (this.cvForm.valid) {
+          this.validationNotice = null;
           this.updateStore();
+          return;
+        }
+
+        if (this.cvForm.dirty) {
+          this.validationNotice = this.i18n.t('editor.validation.formErrors');
         }
       });
   }
@@ -202,12 +242,41 @@ export class CvEditorComponent implements OnInit, OnDestroy {
   }
 
   goToStep(step: number): void {
+    if (this.cvForm?.invalid) {
+      this.getStepControl(this.activeStep)?.markAllAsTouched();
+      this.validationNotice = this.i18n.t('editor.validation.invalidFields');
+    }
+
     this.store.setActiveStep(step);
   }
 
   private rebuildFormFromStore(): void {
     this.buildForm();
+    this.validationNotice = null;
     this.subscribeToFormChanges();
+  }
+
+  private getStepControl(step: number): AbstractControl | null {
+    switch (step) {
+      case 0:
+        return this.profileForm;
+      case 1:
+        return this.experienceForm;
+      case 2:
+        return this.educationForm;
+      case 3:
+        return this.skillsForm;
+      case 4:
+        return this.projectsForm;
+      case 5:
+        return this.certificationsForm;
+      case 6:
+        return this.languagesForm;
+      case 7:
+        return this.additionalForm;
+      default:
+        return null;
+    }
   }
 
   private hasText(value?: string): boolean {

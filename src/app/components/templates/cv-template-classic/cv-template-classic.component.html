@@ -19,44 +19,46 @@
   </div>
 
   <div class="cv-grid grid grid-cols-[3fr_1fr] gap-20 relative">
-    <!-- Experience -->
     <div class="cv-main" *ngIf="store.ui().showSections.experience && sortedExperience().length > 0">
-      <h2 class="text-[9px] classic-section-title">
-        Work experience:
-      </h2>
-      <div class="space-y-4">
-        <div *ngFor="let exp of sortedExperience()" class="mb-4">
-          <div class="flex justify-between items-start mb-1 gap-1">
-            <div class="flex flex-col gap-1">
-              <h3 class="text-[12px] font-semibold classic-text">{{ exp.company }} | {{ exp.role }}</h3>
-              <p class="classic-text text-[8px]">{{ formatDateRange(exp.startDate, exp.endDate, exp.current) }}</p>
+      <!-- Experience -->
+      <div *ngIf="store.ui().showSections.experience && sortedExperience().length > 0">
+        <h2 class="text-[9px] classic-section-title">
+          {{ i18n.t('cv.classic.workExperience') }}
+        </h2>
+        <div class="space-y-4">
+          <div *ngFor="let exp of sortedExperience()" class="mb-4">
+            <div class="flex justify-between items-start mb-1 gap-1">
+              <div class="flex flex-col gap-1">
+                <h3 class="text-[12px] font-semibold classic-text">{{ exp.company }} | {{ exp.role }}</h3>
+                <p class="classic-text text-[8px]">{{ formatDateRange(exp.startDate, exp.endDate, exp.current) }}</p>
+              </div>
             </div>
-          </div>
-          <p *ngIf="exp.role_description" class="text-[7px] classic-text">
-            {{exp.role_description}}
-          </p>
-          <ul *ngIf="exp.achievements.length > 0" class="list-disc list-inside mt-2 space-y-1">
-            <li *ngFor="let achievement of exp.achievements" class="text-[7px] classic-text">
-              {{ achievement }}
-            </li>
-          </ul>
-          <div *ngIf="exp.stack?.length" class="classic-tech-icons mt-3" aria-label="Experience tech stack">
-            <span *ngFor="let icon of techStackIcons.getBrandIcons(exp.stack || [])" class="classic-tech-icon"
-              [class.classic-tech-icon-outline-fill]="
-                icon.className.includes('typescript') ||
-                icon.className.includes('javascript') ||
-                icon.className.includes('angularjs') ||
-                icon.className.includes('html5') ||
-                icon.className.includes('css3')
-              " [title]="icon.tech" [attr.aria-label]="icon.tech">
-              <i [class]="icon.className + ' classic-tech-glyph classic-tech-glyph-bg'"></i>
-              <i [class]="icon.className + ' classic-tech-glyph classic-tech-glyph-fg'"></i>
-            </span>
+            <p *ngIf="exp.role_description" class="text-[7px] classic-text">
+              {{exp.role_description}}
+            </p>
+            <ul *ngIf="exp.achievements.length > 0" class="list-disc list-inside mt-2 space-y-1">
+              <li *ngFor="let achievement of exp.achievements" class="text-[7px] classic-text">
+                {{ achievement }}
+              </li>
+            </ul>
+            <div *ngIf="exp.stack?.length" class="classic-tech-icons mt-3" aria-label="Experience tech stack">
+              <span *ngFor="let icon of techStackIcons.getBrandIcons(exp.stack || [])" class="classic-tech-icon"
+                [class.classic-tech-icon-outline-fill]="
+                  icon.className.includes('typescript') ||
+                  icon.className.includes('javascript') ||
+                  icon.className.includes('angularjs') ||
+                  icon.className.includes('html5') ||
+                  icon.className.includes('css3')
+                " [title]="icon.tech" [attr.aria-label]="icon.tech">
+                <i [class]="icon.className + ' classic-tech-glyph classic-tech-glyph-bg'"></i>
+                <i [class]="icon.className + ' classic-tech-glyph classic-tech-glyph-fg'"></i>
+              </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="cv-sidebar absolute right-0 top-[-9%] w-[25%]">
+    <div class="cv-sidebar absolute right-0 top-[-100px] w-[25%]">
       <div class="flex justify-center mb-6">
         <img class="w-10 h-16 object-contain" src="/assets/images/u-logo.png" alt="u-logo" />
       </div>
@@ -64,7 +66,7 @@
       <!-- Languages -->
       <div *ngIf="store.ui().showSections.languages && cv().languages.length > 0" class="mb-6">
         <h2 class="text-[9px] classic-section-title">
-          Languages:
+          {{ i18n.t('cv.classic.languages') }}
         </h2>
         <div>
           <div *ngFor="let lang of cv().languages">
@@ -74,9 +76,9 @@
       </div>
 
       <!-- Skills -->
-      <div *ngIf="store.ui().showSections.skills && cv().skills.length > 0">
+      <div *ngIf="store.ui().showSections.skills && allSkills().length > 0">
         <h2 class="text-[9px] classic-section-title mb-2">
-          Tools/Technologies
+          {{ i18n.t('cv.classic.tools') }}
         </h2>
         <div class="space-y-3">
           <div class="grid grid-cols-2 gap-x-1 gap-y-2">
