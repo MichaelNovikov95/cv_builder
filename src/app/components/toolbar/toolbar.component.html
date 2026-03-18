@@ -60,16 +60,18 @@
       </div>
     </div>
 
-    <div *ngIf="store.ui().error" class="mt-2 p-2 bg-red-100 text-red-700 rounded text-sm">
-      {{ store.ui().error }}
-      <button
-        type="button"
-        (click)="store.clearError()"
-        class="ml-2 underline"
-      >
-        {{ i18n.t('toolbar.dismiss') }}
-      </button>
-    </div>
+    @if (store.ui().error) {
+      <div class="mt-2 p-2 bg-red-100 text-red-700 rounded text-sm">
+        {{ store.ui().error }}
+        <button
+          type="button"
+          (click)="store.clearError()"
+          class="ml-2 underline"
+        >
+          {{ i18n.t('toolbar.dismiss') }}
+        </button>
+      </div>
+    }
   </div>
 </div>
 

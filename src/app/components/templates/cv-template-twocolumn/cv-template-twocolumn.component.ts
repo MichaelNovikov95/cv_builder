@@ -21,8 +21,9 @@ export class CvTemplateTwoColumnComponent {
   allSkills(): string[] {
     const seen = new Set<string>();
 
-    return this.sortedExperience()
-      .flatMap(exp => exp.stack ?? [])
+    return this.cv()
+      .skills
+      .flatMap(group => group.items ?? [])
       .map(skill => skill.trim())
       .filter(Boolean)
       .filter(skill => {

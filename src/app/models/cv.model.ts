@@ -103,9 +103,7 @@ export interface CvUiState {
     languages: boolean;
     additional: boolean;
   };
-  compact: boolean;
   error?: string;
 }
 
 export type CvTemplate = 'classic' | 'twocol';
-

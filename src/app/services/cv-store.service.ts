@@ -45,7 +45,6 @@ const initialUiState: CvUiState = {
     languages: true,
     additional: true,
   },
-  compact: false,
 };
 
 @Injectable({
@@ -207,10 +206,6 @@ export class CvStoreService {
 
   setActiveStep(step: number): void {
     this.ui.update(ui => ({ ...ui, activeStep: step }));
-  }
-
-  setCompact(compact: boolean): void {
-    this.ui.update(ui => ({ ...ui, compact }));
   }
 
   clearError(): void {

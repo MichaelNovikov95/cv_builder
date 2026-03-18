@@ -12,6 +12,12 @@ export interface TechStackBrandIcon {
   className: string;
 }
 
+export interface TechStackPreset {
+  id: string;
+  label: string;
+  technologies: string[];
+}
+
 interface TechIconPreset {
   symbol: string;
   bgColor: string;
@@ -40,10 +46,20 @@ export class TechStackIconService {
     amazonwebservices: 'aws',
     html5: 'html',
     css3: 'css',
+    vue: 'vue.js',
+    vuejs: 'vue.js',
+    'vue js': 'vue.js',
+    nuxt: 'nuxt.js',
+    nuxtjs: 'nuxt.js',
   };
 
   private readonly deviconMap: Record<string, string> = {
     angular: 'devicon-angularjs-plain',
+    'vue.js': 'devicon-vuejs-plain',
+    vue: 'devicon-vuejs-plain',
+    vuejs: 'devicon-vuejs-plain',
+    'nuxt.js': 'devicon-nuxtjs-plain',
+    nuxtjs: 'devicon-nuxtjs-plain',
     react: 'devicon-react-original',
     redux: 'devicon-redux-original',
     'next.js': 'devicon-nextjs-plain',
@@ -68,11 +84,14 @@ export class TechStackIconService {
     postgresql: 'devicon-postgresql-plain',
     postgres: 'devicon-postgresql-plain',
     mongodb: 'devicon-mongodb-plain',
+    mysql: 'devicon-mysql-plain',
     redis: 'devicon-redis-plain',
     docker: 'devicon-docker-plain',
     aws: 'devicon-amazonwebservices-plain-wordmark',
     azure: 'devicon-azure-plain',
     graphql: 'devicon-graphql-plain',
+    rxjs: 'devicon-rxjs-plain',
+    vite: 'devicon-vitejs-plain',
     'socket.io': 'devicon-socketio-original',
     express: 'devicon-express-original',
     python: 'devicon-python-plain',
@@ -89,9 +108,13 @@ export class TechStackIconService {
 
   private readonly techAutocompleteOptions = [
     'Angular',
+    'Vue.js',
+    'Nuxt.js',
     'React',
     'Redux',
     'Next.js',
+    'Vite',
+    'RxJS',
     'Node.js',
     'NestJS',
     'Express',
@@ -101,6 +124,7 @@ export class TechStackIconService {
     'CSS3',
     'Tailwind CSS',
     'PostgreSQL',
+    'MySQL',
     'MongoDB',
     'Redis',
     'Docker',
@@ -119,6 +143,137 @@ export class TechStackIconService {
     'Django',
   ];
 
+  private readonly techStackPresets: TechStackPreset[] = [
+    {
+      id: 'react-fullstack',
+      label: 'React Fullstack Developer',
+      technologies: [
+        'React',
+        'Redux',
+        'Next.js',
+        'Node.js',
+        'NestJS',
+        'Express',
+        'TypeScript',
+        'JavaScript',
+        'HTML5',
+        'CSS3',
+        'Tailwind CSS',
+        'PostgreSQL',
+        'MongoDB',
+        'Redis',
+        'Docker',
+        'AWS',
+        'Git',
+        'GitHub Actions',
+        'Jest',
+        'Cypress',
+      ],
+    },
+    {
+      id: 'angular-fullstack',
+      label: 'Angular Fullstack Developer',
+      technologies: [
+        'Angular',
+        'RxJS',
+        'Node.js',
+        'NestJS',
+        'Express',
+        'TypeScript',
+        'JavaScript',
+        'HTML5',
+        'CSS3',
+        'Tailwind CSS',
+        'PostgreSQL',
+        'MongoDB',
+        'Redis',
+        'Docker',
+        'AWS',
+        'Git',
+        'GitHub Actions',
+        'Jest',
+        'Cypress',
+      ],
+    },
+    {
+      id: 'vue-fullstack',
+      label: 'Vue Fullstack Developer',
+      technologies: [
+        'Vue.js',
+        'Nuxt.js',
+        'Node.js',
+        'NestJS',
+        'Express',
+        'TypeScript',
+        'JavaScript',
+        'HTML5',
+        'CSS3',
+        'Tailwind CSS',
+        'PostgreSQL',
+        'MongoDB',
+        'Redis',
+        'Docker',
+        'AWS',
+        'Git',
+        'GitHub Actions',
+        'Jest',
+        'Cypress',
+      ],
+    },
+    {
+      id: 'react-frontend',
+      label: 'React Frontend Developer',
+      technologies: [
+        'React',
+        'Redux',
+        'Next.js',
+        'Vite',
+        'TypeScript',
+        'JavaScript',
+        'HTML5',
+        'CSS3',
+        'Tailwind CSS',
+        'Jest',
+        'Cypress',
+        'Git',
+      ],
+    },
+    {
+      id: 'angular-frontend',
+      label: 'Angular Frontend Developer',
+      technologies: [
+        'Angular',
+        'RxJS',
+        'Vite',
+        'TypeScript',
+        'JavaScript',
+        'HTML5',
+        'CSS3',
+        'Tailwind CSS',
+        'Jest',
+        'Cypress',
+        'Git',
+      ],
+    },
+    {
+      id: 'vue-frontend',
+      label: 'Vue Frontend Developer',
+      technologies: [
+        'Vue.js',
+        'Nuxt.js',
+        'Vite',
+        'TypeScript',
+        'JavaScript',
+        'HTML5',
+        'CSS3',
+        'Tailwind CSS',
+        'Jest',
+        'Cypress',
+        'Git',
+      ],
+    },
+  ];
+
   private readonly palette = [
     { bgColor: '#DBEAFE', textColor: '#1D4ED8' },
     { bgColor: '#DCFCE7', textColor: '#166534' },
@@ -132,6 +287,7 @@ export class TechStackIconService {
 
   private readonly knownIcons: Record<string, TechIconPreset> = {
     angular: { symbol: 'A', bgColor: '#FEE2E2', textColor: '#BE123C' },
+    'vue.js': { symbol: 'V', bgColor: '#DCFCE7', textColor: '#166534' },
     react: { symbol: 'R', bgColor: '#E0F2FE', textColor: '#0369A1' },
     'node.js': { symbol: 'N', bgColor: '#DCFCE7', textColor: '#166534' },
     node: { symbol: 'N', bgColor: '#DCFCE7', textColor: '#166534' },
@@ -211,6 +367,13 @@ export class TechStackIconService {
 
   getTechOptions(): string[] {
     return [...this.techAutocompleteOptions];
+  }
+
+  getTechStackPresets(): TechStackPreset[] {
+    return this.techStackPresets.map(preset => ({
+      ...preset,
+      technologies: [...preset.technologies],
+    }));
   }
 
   private createIcon(tech: string): TechStackIcon {

@@ -10,34 +10,36 @@
     </button>
   </div>
 
-  <div *ngIf="experienceArray.length === 0" class="text-gray-500 text-center py-8">
-    {{ i18n.t('form.experience.empty') }}
-  </div>
-
-  <div
-    *ngFor="let exp of experienceArray.controls; let i = index"
-    class="border border-gray-200 rounded-lg p-4 space-y-4"
-  >
-    <div class="flex items-start justify-between">
-      <h3 class="text-lg font-semibold">{{ i18n.t('form.experience.itemPrefix') }}{{ i + 1 }}</h3>
-      <div class="flex items-center gap-2">
-        <app-reorder-buttons
-          [canMoveUp]="i > 0"
-          [canMoveDown]="i < experienceArray.length - 1"
-          (moveUp)="moveUp(i)"
-          (moveDown)="moveDown(i)"
-        ></app-reorder-buttons>
-        <button
-          type="button"
-          (click)="removeExperience(i)"
-          class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
-        >
-          {{ i18n.t('common.remove') }}
-        </button>
-      </div>
+  @if (experienceArray.length === 0) {
+    <div class="text-gray-500 text-center py-8">
+      {{ i18n.t('form.experience.empty') }}
     </div>
+  }
 
-    <div [formGroup]="$any(exp)" class="space-y-4">
+  @for (exp of experienceArray.controls; track $index; let i = $index) {
+    <div
+      class="border border-gray-200 rounded-lg p-4 space-y-4"
+    >
+      <div class="flex items-start justify-between">
+        <h3 class="text-lg font-semibold">{{ i18n.t('form.experience.itemPrefix') }}{{ i + 1 }}</h3>
+        <div class="flex items-center gap-2">
+          <app-reorder-buttons
+            [canMoveUp]="i > 0"
+            [canMoveDown]="i < experienceArray.length - 1"
+            (moveUp)="moveUp(i)"
+            (moveDown)="moveDown(i)"
+          ></app-reorder-buttons>
+          <button
+            type="button"
+            (click)="removeExperience(i)"
+            class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
+          >
+            {{ i18n.t('common.remove') }}
+          </button>
+        </div>
+      </div>
+
+      <div [formGroup]="$any(exp)" class="space-y-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -48,9 +50,11 @@
             formControlName="company"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div *ngIf="showControlError($any(exp).get('company'), 'required')" class="mt-1 text-sm text-red-600">
-            {{ i18n.t('form.experience.companyRequired') }}
-          </div>
+          @if (showControlError($any(exp).get('company'), 'required')) {
+            <div class="mt-1 text-sm text-red-600">
+              {{ i18n.t('form.experience.companyRequired') }}
+            </div>
+          }
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -61,10 +65,27 @@
             formControlName="role"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div *ngIf="showControlError($any(exp).get('role'), 'required')" class="mt-1 text-sm text-red-600">
-            {{ i18n.t('form.experience.roleRequired') }}
-          </div>
+          @if (showControlError($any(exp).get('role'), 'required')) {
+            <div class="mt-1 text-sm text-red-600">
+              {{ i18n.t('form.experience.roleRequired') }}
+            </div>
+          }
         </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          {{ i18n.t('form.experience.descriptionLabel') }}
+        </label>
+        <textarea
+          formControlName="role_description"
+          rows="3"
+          [placeholder]="i18n.t('form.experience.descriptionPlaceholder')"
+          class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        ></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
             {{ i18n.t('form.experience.startDateLabel') }} <span class="text-red-500">*</span>
@@ -75,9 +96,11 @@
             [attr.max]="!exp.get('current')?.value ? (exp.get('endDate')?.value || null) : null"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div *ngIf="showControlError($any(exp).get('startDate'), 'required')" class="mt-1 text-sm text-red-600">
-            {{ i18n.t('form.experience.startDateRequired') }}
-          </div>
+          @if (showControlError($any(exp).get('startDate'), 'required')) {
+            <div class="mt-1 text-sm text-red-600">
+              {{ i18n.t('form.experience.startDateRequired') }}
+            </div>
+          }
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">{{ i18n.t('form.experience.endDateLabel') }}</label>
@@ -109,63 +132,143 @@
           </label>
         </div>
       </div>
-      <div *ngIf="showDateOrderError($any(exp))" class="text-sm text-red-600">
-        {{ i18n.t('form.experience.dateOrderError') }}
-      </div>
+      @if (showDateOrderError($any(exp))) {
+        <div class="text-sm text-red-600">
+          {{ i18n.t('form.experience.dateOrderError') }}
+        </div>
+      }
 
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('form.experience.techStackLabel') }}</label>
-        <div formArrayName="stack" class="space-y-2">
-          <div
-            *ngFor="let item of getStack($any(exp)).controls; let j = index"
-            class="flex gap-2"
-          >
-            <select
-              [formControl]="$any(item)"
-              class="flex-1 w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">{{ i18n.t('common.selectTechnology') }}</option>
-              <option *ngFor="let option of techOptions" [value]="option">{{ option }}</option>
-            </select>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between gap-3">
+          <label class="block text-sm font-medium text-gray-700">{{ i18n.t('form.experience.techStackLabel') }}</label>
+          @if (selectedStack($any(exp)).length > 3) {
             <button
               type="button"
-              (click)="removeStackItem($any(exp), j)"
-              class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+              (click)="clearStack($any(exp))"
+              class="px-2.5 py-1.5 bg-red-100 text-red-700 hover:bg-red-200 rounded text-xs"
             >
-              {{ i18n.t('common.remove') }}
+              {{ i18n.t('common.clearAll') }}
             </button>
-          </div>
+          }
+        </div>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <select
+            #presetSelect
+            class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">{{ i18n.t('form.experience.presetPlaceholder') }}</option>
+            @for (preset of stackPresets; track preset.id) {
+              <option [value]="preset.id">{{ presetLabel(preset) }}</option>
+            }
+          </select>
           <button
             type="button"
-            (click)="addStackItem($any(exp))"
-            class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+            (click)="applyStackPreset($any(exp), presetSelect.value)"
+            [disabled]="!presetSelect.value"
+            class="px-3 py-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded text-sm"
           >
-            {{ i18n.t('form.experience.addTechnology') }}
+            {{ i18n.t('form.experience.applyPreset') }}
           </button>
+        </div>
+
+        @if (selectedStack($any(exp)).length > 0) {
+          <div class="space-y-2">
+            @for (stackItem of getStack($any(exp)).controls; track $index; let j = $index) {
+              <div
+                draggable="true"
+                (dragstart)="onStackDragStart($any(exp), j, $event)"
+                (dragover)="onStackDragOver($any(exp), j, $event)"
+                (drop)="onStackDrop($any(exp), j, $event)"
+                (dragend)="onStackDragEnd($any(exp))"
+                class="app-draggable-item flex items-center justify-between gap-2 rounded border border-gray-200 px-3 py-2"
+                [class.app-draggable-item-dragging]="isStackDragging($any(exp), j)"
+                [class.app-draggable-item-target]="isStackDropTarget($any(exp), j)"
+              >
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-gray-400 text-base leading-none">⋮</span>
+                  <span class="text-sm text-gray-700 truncate">{{ stackItem.value }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    (click)="removeStackItem($any(exp), j)"
+                    class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+                  >
+                    {{ i18n.t('common.remove') }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="relative">
+          <button
+            type="button"
+            (click)="toggleStackPicker($any(exp))"
+            class="app-dropdown-trigger w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded text-left"
+          >
+            <span class="text-sm">{{ i18n.t('form.experience.selectTechnologies') }}</span>
+            <span class="text-xs text-gray-500">{{ selectedStack($any(exp)).length }}</span>
+          </button>
+          @if (isStackPickerOpen($any(exp))) {
+            <div
+              class="mt-2 rounded border border-gray-300 bg-white p-3 shadow-sm space-y-2"
+            >
+              <input
+                type="text"
+                [value]="stackFilter($any(exp))"
+                (input)="setStackFilter($any(exp), $any($event.target).value)"
+                [placeholder]="i18n.t('form.experience.searchTechnologyPlaceholder')"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <div class="max-h-52 overflow-y-auto space-y-1">
+                @for (option of filteredTechOptions($any(exp)); track option) {
+                  <label
+                    class="app-checkbox-option flex items-center gap-2 rounded px-2 py-1 cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      [checked]="isStackSelected($any(exp), option)"
+                      (change)="toggleStackSelection($any(exp), option, $any($event.target).checked)"
+                      class="w-4 h-4"
+                    />
+                    <span class="text-sm text-gray-700">{{ option }}</span>
+                  </label>
+                }
+                @if (filteredTechOptions($any(exp)).length === 0) {
+                  <p class="text-xs text-gray-500 px-2 py-1">
+                    {{ i18n.t('form.experience.noTechnologyFound') }}
+                  </p>
+                }
+              </div>
+            </div>
+          }
         </div>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">{{ i18n.t('form.experience.achievementsLabel') }}</label>
         <div formArrayName="achievements" class="space-y-2">
-          <div
-            *ngFor="let bullet of getAchievements($any(exp)).controls; let j = index"
-            class="flex gap-2"
-          >
-            <input
-              type="text"
-              [formControl]="$any(bullet)"
-              [placeholder]="i18n.t('form.experience.achievementPlaceholder')"
-              class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              type="button"
-              (click)="removeBullet($any(exp), j)"
-              class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+          @for (bullet of getAchievements($any(exp)).controls; track $index; let j = $index) {
+            <div
+              class="flex gap-2"
             >
-              {{ i18n.t('common.remove') }}
-            </button>
-          </div>
+              <input
+                type="text"
+                [formControl]="$any(bullet)"
+                [placeholder]="i18n.t('form.experience.achievementPlaceholder')"
+                class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                (click)="removeBullet($any(exp), j)"
+                class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
+              >
+                {{ i18n.t('common.remove') }}
+              </button>
+            </div>
+          }
           <button
             type="button"
             (click)="addBullet($any(exp))"
@@ -176,5 +279,6 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
+  }
 </div>

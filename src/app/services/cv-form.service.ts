@@ -53,12 +53,13 @@ export class CvFormService {
       {
         company: new FormControl(item?.company || '', [Validators.required]),
         role: new FormControl(item?.role || '', [Validators.required]),
+        role_description: new FormControl(item?.role_description || ''),
         startDate: new FormControl(item?.startDate || '', [Validators.required]),
         endDate: new FormControl(item?.endDate || ''),
         current: new FormControl(item?.current || false),
         location: new FormControl(item?.location || ''),
         stack: new FormArray(
-          (item?.stack || ['']).map(tech => new FormControl(tech || ''))
+          (item?.stack || []).map(tech => new FormControl(tech || ''))
         ),
         achievements: new FormArray(
           (item?.achievements || ['']).map(ach => new FormControl(ach || ''))
@@ -100,9 +101,9 @@ export class CvFormService {
 
   createSkillsGroupForm(group?: SkillsGroup): FormGroup {
     return new FormGroup({
-      name: new FormControl(group?.name || '', [Validators.required]),
+      name: new FormControl(group?.name ?? 'Technologies', [Validators.required]),
       items: new FormArray(
-        (group?.items || ['']).map(item => new FormControl(item || ''))
+        (group?.items || []).map(item => new FormControl(item || ''))
       ),
     });
   }
@@ -237,11 +238,17 @@ export class CvFormService {
   }
 
   experienceFormToModel(formArray: FormArray): ExperienceItem[] {
-    return formArray.value.map((item: any) => ({
-      ...item,
-      stack: (item.stack || []).filter((s: string) => s.trim() !== ''),
-      achievements: item.achievements.filter((a: string) => a.trim() !== ''),
-    })) as ExperienceItem[];
+    return formArray.value.map((item: any) => {
+      const roleDescription = String(item.role_description ?? '').trim();
+      const { role_description: _ignoredRoleDescription, ...rest } = item;
+
+      return {
+        ...rest,
+        ...(roleDescription ? { role_description: roleDescription } : {}),
+        stack: (item.stack || []).filter((s: string) => s.trim() !== ''),
+        achievements: item.achievements.filter((a: string) => a.trim() !== ''),
+      };
+    }) as ExperienceItem[];
   }
 
   educationFormToModel(formArray: FormArray): EducationItem[] {

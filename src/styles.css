@@ -16,6 +16,11 @@
   --app-button-primary-bg: #2563eb;
   --app-button-primary-bg-hover: #1d4ed8;
   --app-button-primary-text: #ffffff;
+  --app-input-hover-bg: #eff6ff;
+  --app-input-hover-border: #60a5fa;
+  --app-checkbox-option-hover-bg: #eff6ff;
+  --app-dropdown-trigger-hover-bg: #f3f4f6;
+  --app-select-icon-right-offset: calc(0.75rem + 5px);
 
   --cv-shell-bg: #040a1b;
   --cv-shell-bg-image: url("/assets/images/blue_bg.png");
@@ -35,6 +40,11 @@
   --app-button-primary-bg: #1d4ed8;
   --app-button-primary-bg-hover: #1e40af;
   --app-button-primary-text: #eff6ff;
+  --app-input-hover-bg: #13223c;
+  --app-input-hover-border: #60a5fa;
+  --app-checkbox-option-hover-bg: #1e3a8a40;
+  --app-dropdown-trigger-hover-bg: #1e3a8a55;
+  --app-select-icon-right-offset: calc(0.75rem + 5px);
 }
 
 .theme-dark body {
@@ -75,6 +85,30 @@
 
 .theme-dark :where(input, textarea, select)::placeholder {
   color: #9ca3af;
+}
+
+:where(input, textarea, select):not(.cv-shell):not(.cv-shell *):not([type='checkbox']):not([type='radio']) {
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+:where(input, textarea, select):not(.cv-shell):not(.cv-shell *):not([type='checkbox']):not([type='radio']):hover {
+  background-color: var(--app-input-hover-bg);
+  border-color: var(--app-input-hover-border);
+}
+
+:where(select):not(.cv-shell):not(.cv-shell *) {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 2.25rem;
+  background-repeat: no-repeat;
+  background-size: 0.85rem;
+  background-position: right var(--app-select-icon-right-offset) center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%236b7280' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.theme-dark :where(select):not(.cv-shell):not(.cv-shell *) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%23cbd5e1' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
 :where(input, textarea, select).ng-invalid.ng-touched:not(form),
@@ -138,8 +172,8 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 
 .theme-dark input[type='date']::-webkit-calendar-picker-indicator {
-  opacity: 0.9;
-  filter: invert(1) grayscale(1);
+  opacity: 1;
+  filter: invert(1) grayscale(1) brightness(1.7);
 }
 
 .theme-dark :where(.shadow, .shadow-sm, .shadow-lg, .shadow-xl):not(.cv-shell):not(.cv-shell *) {
@@ -157,6 +191,40 @@ input[type='date']::-webkit-calendar-picker-indicator {
 .theme-dark :where(label, legend):not(.cv-shell *),
 .theme-dark :where(h1, h2, h3, h4, h5, h6):not(.cv-shell *):not(.app-toolbar-title) {
   color: inherit;
+}
+
+.app-checkbox-option {
+  transition: background-color 150ms ease;
+}
+
+.app-checkbox-option:hover {
+  background-color: var(--app-checkbox-option-hover-bg);
+}
+
+.app-dropdown-trigger {
+  transition: background-color 150ms ease;
+}
+
+.app-dropdown-trigger:hover {
+  background-color: var(--app-dropdown-trigger-hover-bg);
+}
+
+.app-draggable-item {
+  cursor: grab;
+  transition: border-color 150ms ease, background-color 150ms ease, opacity 150ms ease;
+}
+
+.app-draggable-item:active {
+  cursor: grabbing;
+}
+
+.app-draggable-item-dragging {
+  opacity: 0.65;
+}
+
+.app-draggable-item-target {
+  border-color: #60a5fa !important;
+  background-color: rgb(96 165 250 / 0.08);
 }
 
 .app-page {

@@ -1,4 +1,8 @@
 <div class="app-page">
-  <app-toolbar *ngIf="showToolbar()"></app-toolbar>
+  @if (showToolbar()) {
+    @defer (on idle) {
+      <app-toolbar></app-toolbar>
+    }
+  }
   <router-outlet />
 </div>
