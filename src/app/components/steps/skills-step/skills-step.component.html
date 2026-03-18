@@ -1,81 +1,111 @@
 <div class="space-y-4">
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-2xl font-semibold">Skills</h2>
-    <button
-      type="button"
-      (click)="addGroup()"
-      class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded text-sm"
-    >
-      + Add Skill Group
-    </button>
-  </div>
-
-  <div *ngIf="skillsArray.length === 0" class="text-gray-500 text-center py-8">
-    No skill groups yet. Click "Add Skill Group" to get started.
-  </div>
-
-  <div
-    *ngFor="let group of skillsArray.controls; let i = index"
-    class="border border-gray-200 rounded-lg p-4 space-y-4"
-  >
-    <div class="flex items-start justify-between">
-      <h3 class="text-lg font-semibold">Skill Group #{{ i + 1 }}</h3>
+  <div class="flex items-center justify-between gap-3 mb-4">
+    <h2 class="text-2xl font-semibold">{{ i18n.t('form.technologies.sectionTitle') }}</h2>
+    @if (selectedTechnologies().length > 3) {
       <button
         type="button"
-        (click)="removeGroup(i)"
-        class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
+        (click)="clearTechnologies()"
+        class="px-2.5 py-1.5 bg-red-100 text-red-700 hover:bg-red-200 rounded text-xs"
       >
-        Remove
+        {{ i18n.t('common.clearAll') }}
+      </button>
+    }
+  </div>
+
+  <div class="space-y-3">
+    <div class="flex flex-col sm:flex-row gap-2">
+      <select
+        #presetSelect
+        class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">{{ i18n.t('form.technologies.presetPlaceholder') }}</option>
+        @for (preset of stackPresets; track preset.id) {
+          <option [value]="preset.id">{{ presetLabel(preset) }}</option>
+        }
+      </select>
+      <button
+        type="button"
+        (click)="applyStackPreset(presetSelect.value)"
+        [disabled]="!presetSelect.value"
+        class="px-3 py-2 bg-gray-100 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed rounded text-sm"
+      >
+        {{ i18n.t('form.technologies.applyPreset') }}
       </button>
     </div>
 
-    <div [formGroup]="$any(group)" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">
-          Group Name <span class="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          formControlName="name"
-          placeholder="e.g., Frontend, Backend, Tools"
-          class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <div *ngIf="showControlError($any(group).get('name'), 'required')" class="mt-1 text-sm text-red-600">
-          Group name is required
-        </div>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Skills</label>
-        <div formArrayName="items" class="space-y-2">
+    @if (technologyItems.length > 0) {
+      <div class="space-y-2">
+        @for (tech of technologyItems.controls; track $index; let i = $index) {
           <div
-            *ngFor="let skill of getItems($any(group)).controls; let j = index"
-            class="flex gap-2"
+            draggable="true"
+            (dragstart)="onTechnologyDragStart(i, $event)"
+            (dragover)="onTechnologyDragOver(i, $event)"
+            (drop)="onTechnologyDrop(i, $event)"
+            (dragend)="onTechnologyDragEnd()"
+            class="app-draggable-item flex items-center justify-between gap-2 rounded border border-gray-200 px-3 py-2"
+            [class.app-draggable-item-dragging]="isTechnologyDragging(i)"
+            [class.app-draggable-item-target]="isTechnologyDropTarget(i)"
           >
-            <select
-              [formControl]="$any(skill)"
-              class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select skill</option>
-              <option *ngFor="let option of skillOptions" [value]="option">{{ option }}</option>
-            </select>
-            <button
-              type="button"
-              (click)="removeItem($any(group), j)"
-              class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-            >
-              Remove
-            </button>
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-gray-400 text-base leading-none">⋮</span>
+              <span class="text-sm text-gray-700 truncate">{{ tech.value }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                (click)="removeTechnology(i)"
+                class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-xs"
+              >
+                {{ i18n.t('common.remove') }}
+              </button>
+            </div>
           </div>
-          <button
-            type="button"
-            (click)="addItem($any(group))"
-            class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded text-sm"
-          >
-            + Add Skill
-          </button>
-        </div>
+        }
       </div>
+    }
+
+    <div class="relative">
+      <button
+        type="button"
+        (click)="toggleDropdown()"
+        class="app-dropdown-trigger w-full flex items-center justify-between px-3 py-2 border border-gray-300 rounded text-left"
+      >
+        <span class="text-sm">{{ i18n.t('form.technologies.selectTechnologies') }}</span>
+        <span class="text-xs text-gray-500">{{ selectedTechnologies().length }}</span>
+      </button>
+      @if (isDropdownOpen) {
+        <div
+          class="mt-2 rounded border border-gray-300 bg-white p-3 shadow-sm space-y-2"
+        >
+          <input
+            type="text"
+            [value]="filterQuery"
+            (input)="filterQuery = $any($event.target).value"
+            [placeholder]="i18n.t('form.technologies.searchPlaceholder')"
+            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <div class="max-h-56 overflow-y-auto space-y-1">
+            @for (option of filteredSkillOptions(); track option) {
+              <label
+                class="app-checkbox-option flex items-center gap-2 rounded px-2 py-1 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  [checked]="isTechnologySelected(option)"
+                  (change)="toggleTechnologySelection(option, $any($event.target).checked)"
+                  class="w-4 h-4"
+                />
+                <span class="text-sm text-gray-700">{{ option }}</span>
+              </label>
+            }
+            @if (filteredSkillOptions().length === 0) {
+              <p class="text-xs text-gray-500 px-2 py-1">
+                {{ i18n.t('form.technologies.noTechnologyFound') }}
+              </p>
+            }
+          </div>
+        </div>
+      }
     </div>
   </div>
 </div>

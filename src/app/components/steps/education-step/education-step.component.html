@@ -10,107 +10,118 @@
     </button>
   </div>
 
-  <div *ngIf="educationArray.length === 0" class="text-gray-500 text-center py-8">
-    No education entries yet. Click "Add Education" to get started.
-  </div>
+  @if (educationArray.length === 0) {
+    <div class="text-gray-500 text-center py-8">
+      No education entries yet. Click "Add Education" to get started.
+    </div>
+  }
 
-  <div
-    *ngFor="let edu of educationArray.controls; let i = index"
-    class="border border-gray-200 rounded-lg p-4 space-y-4"
-  >
-    <div class="flex items-start justify-between">
-      <h3 class="text-lg font-semibold">Education #{{ i + 1 }}</h3>
-      <div class="flex items-center gap-2">
-        <app-reorder-buttons
-          [canMoveUp]="i > 0"
-          [canMoveDown]="i < educationArray.length - 1"
-          (moveUp)="moveUp(i)"
-          (moveDown)="moveDown(i)"
-        ></app-reorder-buttons>
-        <button
-          type="button"
-          (click)="removeEducation(i)"
-          class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
-        >
-          Remove
-        </button>
+  @for (edu of educationArray.controls; track $index; let i = $index) {
+    <div
+      class="border border-gray-200 rounded-lg p-4 space-y-4"
+    >
+      <div class="flex items-start justify-between">
+        <h3 class="text-lg font-semibold">Education #{{ i + 1 }}</h3>
+        <div class="flex items-center gap-2">
+          <app-reorder-buttons
+            [canMoveUp]="i > 0"
+            [canMoveDown]="i < educationArray.length - 1"
+            (moveUp)="moveUp(i)"
+            (moveDown)="moveDown(i)"
+          ></app-reorder-buttons>
+          <button
+            type="button"
+            (click)="removeEducation(i)"
+            class="px-3 py-1 bg-red-100 text-red-700 hover:bg-red-200 rounded text-sm"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+
+      <div [formGroup]="$any(edu)" class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              School/University <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="school"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            @if (showControlError($any(edu).get('school'), 'required')) {
+              <div class="mt-1 text-sm text-red-600">
+                School is required
+              </div>
+            }
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Degree <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              formControlName="degree"
+              placeholder="e.g., Bachelor of Science"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            @if (showControlError($any(edu).get('degree'), 'required')) {
+              <div class="mt-1 text-sm text-red-600">
+                Degree is required
+              </div>
+            }
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Field of Study</label>
+            <input
+              type="text"
+              formControlName="field"
+              placeholder="e.g., Computer Science"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Start Date <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              formControlName="startDate"
+              [attr.max]="edu.get('endDate')?.value || null"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            @if (showControlError($any(edu).get('startDate'), 'required')) {
+              <div class="mt-1 text-sm text-red-600">
+                Start date is required
+              </div>
+            }
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+            <input
+              type="date"
+              formControlName="endDate"
+              [attr.min]="edu.get('startDate')?.value || null"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <textarea
+              formControlName="notes"
+              rows="2"
+              placeholder="e.g., GPA, honors, relevant coursework..."
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ></textarea>
+          </div>
+        </div>
+        @if (showDateOrderError($any(edu))) {
+          <div class="text-sm text-red-600">
+            Start date cannot be later than end date.
+          </div>
+        }
       </div>
     </div>
-
-    <div [formGroup]="$any(edu)" class="space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            School/University <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            formControlName="school"
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div *ngIf="showControlError($any(edu).get('school'), 'required')" class="mt-1 text-sm text-red-600">
-            School is required
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Degree <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            formControlName="degree"
-            placeholder="e.g., Bachelor of Science"
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div *ngIf="showControlError($any(edu).get('degree'), 'required')" class="mt-1 text-sm text-red-600">
-            Degree is required
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Field of Study</label>
-          <input
-            type="text"
-            formControlName="field"
-            placeholder="e.g., Computer Science"
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Start Date <span class="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            formControlName="startDate"
-            [attr.max]="edu.get('endDate')?.value || null"
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div *ngIf="showControlError($any(edu).get('startDate'), 'required')" class="mt-1 text-sm text-red-600">
-            Start date is required
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-          <input
-            type="date"
-            formControlName="endDate"
-            [attr.min]="edu.get('startDate')?.value || null"
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-          <textarea
-            formControlName="notes"
-            rows="2"
-            placeholder="e.g., GPA, honors, relevant coursework..."
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          ></textarea>
-        </div>
-      </div>
-      <div *ngIf="showDateOrderError($any(edu))" class="text-sm text-red-600">
-        Start date cannot be later than end date.
-      </div>
-    </div>
-  </div>
+  }
 </div>

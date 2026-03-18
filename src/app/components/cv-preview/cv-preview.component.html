@@ -1,8 +1,12 @@
 <div class="cv-shell">
-  <app-cv-template-classic
-    *ngIf="store.template() === 'classic'"
-  ></app-cv-template-classic>
-  <app-cv-template-twocolumn
-    *ngIf="store.template() === 'twocol'"
-  ></app-cv-template-twocolumn>
+  @if (store.template() === 'classic') {
+    @defer (on idle) {
+      <app-cv-template-classic></app-cv-template-classic>
+    }
+  }
+  @if (store.template() === 'twocol') {
+    @defer (on idle) {
+      <app-cv-template-twocolumn></app-cv-template-twocolumn>
+    }
+  }
 </div>

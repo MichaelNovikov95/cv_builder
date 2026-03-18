@@ -4,82 +4,72 @@
     <div class="max-w-3xl mx-auto">
       <!-- Stepper -->
       <div class="mb-6">
-        <div class="flex items-center justify-between mb-4">
+        <div class="mb-4">
           <h2 class="text-xl font-semibold">{{ i18n.t('editor.title') }}</h2>
-          <div class="flex items-center gap-2">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                [checked]="store.ui().compact"
-                (change)="store.setCompact(!store.ui().compact)"
-                class="w-4 h-4"
-              />
-              <span class="text-sm text-gray-700">{{ i18n.t('editor.compactSpacing') }}</span>
-            </label>
-          </div>
         </div>
         <div class="flex flex-wrap gap-2 mb-4">
-          <button
-            *ngFor="let step of steps"
-            type="button"
-            (click)="goToStep(step.id)"
-            [class.bg-blue-600]="activeStep === step.id"
-            [class.text-white]="activeStep === step.id"
-            [class.bg-gray-200]="activeStep !== step.id"
-            [class.text-gray-700]="activeStep !== step.id"
-            class="px-4 py-2 rounded text-sm font-medium hover:opacity-90"
-          >
-            {{ stepLabel(step.key) }}
-          </button>
+          @for (step of steps; track step.id) {
+            <button
+              type="button"
+              (click)="goToStep(step.id)"
+              [class.bg-blue-600]="activeStep === step.id"
+              [class.text-white]="activeStep === step.id"
+              [class.bg-gray-200]="activeStep !== step.id"
+              [class.text-gray-700]="activeStep !== step.id"
+              class="px-4 py-2 rounded text-sm font-medium hover:opacity-90"
+            >
+              {{ stepLabel(step.key) }}
+            </button>
+          }
         </div>
       </div>
 
       <!-- Form Steps -->
       <div class="bg-white rounded-lg shadow p-6">
-        <div
-          *ngIf="validationNotice"
-          class="mb-4 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
-        >
-          {{ validationNotice }}
-        </div>
+        @if (validationNotice) {
+          <div
+            class="mb-4 rounded border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+          >
+            {{ validationNotice }}
+          </div>
+        }
         <form [formGroup]="cvForm">
-          <div [hidden]="activeStep !== 0">
-            <app-profile-step [form]="profileForm"></app-profile-step>
-          </div>
-          <div [hidden]="activeStep !== 1">
-            <app-experience-step [formArray]="experienceForm"></app-experience-step>
-          </div>
-          <div [hidden]="activeStep !== 2">
-            <app-education-step [formArray]="educationForm"></app-education-step>
-          </div>
-          <div [hidden]="activeStep !== 3">
-            <app-skills-step [formArray]="skillsForm"></app-skills-step>
-          </div>
-          <div [hidden]="activeStep !== 4">
-            <app-projects-step [formArray]="projectsForm"></app-projects-step>
-          </div>
-          <div [hidden]="activeStep !== 5">
-            <app-certifications-step [formArray]="certificationsForm"></app-certifications-step>
-          </div>
-          <div [hidden]="activeStep !== 6">
-            <app-languages-step [formArray]="languagesForm"></app-languages-step>
-          </div>
-          <div [hidden]="activeStep !== 7">
-            <app-additional-step [form]="additionalForm"></app-additional-step>
-          </div>
+          @defer (when activeStep === 0) {
+            <div [hidden]="activeStep !== 0">
+              <app-profile-step [form]="profileForm"></app-profile-step>
+            </div>
+          }
+          @defer (when activeStep === 1) {
+            <div [hidden]="activeStep !== 1">
+              <app-experience-step [formArray]="experienceForm"></app-experience-step>
+            </div>
+          }
+          @defer (when activeStep === 2) {
+            <div [hidden]="activeStep !== 2">
+              <app-skills-step [formArray]="skillsForm"></app-skills-step>
+            </div>
+          }
+          @defer (when activeStep === 3) {
+            <div [hidden]="activeStep !== 3">
+              <app-languages-step [formArray]="languagesForm"></app-languages-step>
+            </div>
+          }
         </form>
       </div>
     </div>
   </div>
 
   <!-- Preview Panel -->
-  <div
-    *ngIf="canShowLivePreview()"
-    class="flex-1 lg:w-1/2 overflow-y-auto bg-gray-100 p-6 border-t lg:border-t-0 lg:border-l border-gray-300"
-  >
-    <div class="max-w-2xl mx-auto">
-      <h2 class="text-xl font-semibold mb-4">{{ i18n.t('editor.livePreview') }}</h2>
-      <app-cv-preview></app-cv-preview>
+  @if (canShowLivePreview()) {
+    <div
+      class="flex-1 lg:w-1/2 overflow-y-auto bg-gray-100 p-6 border-t lg:border-t-0 lg:border-l border-gray-300"
+    >
+      @defer (when canShowLivePreview()) {
+        <div class="max-w-2xl mx-auto">
+          <h2 class="text-xl font-semibold mb-4">{{ i18n.t('editor.livePreview') }}</h2>
+          <app-cv-preview></app-cv-preview>
+        </div>
+      }
     </div>
-  </div>
+  }
 </div>

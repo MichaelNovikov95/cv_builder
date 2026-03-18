@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy, computed, effect, inject, untracked} from '@angular/core';
+import {Component, OnInit, OnDestroy, effect, inject, untracked} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -12,12 +12,8 @@ import { CvStoreService } from '../../services/cv-store.service';
 import { CvFormService } from '../../services/cv-form.service';
 import { ProfileStepComponent } from '../steps/profile-step/profile-step.component';
 import { ExperienceStepComponent } from '../steps/experience-step/experience-step.component';
-import { EducationStepComponent } from '../steps/education-step/education-step.component';
 import { SkillsStepComponent } from '../steps/skills-step/skills-step.component';
-import { ProjectsStepComponent } from '../steps/projects-step/projects-step.component';
-import { CertificationsStepComponent } from '../steps/certifications-step/certifications-step.component';
 import { LanguagesStepComponent } from '../steps/languages-step/languages-step.component';
-import { AdditionalStepComponent } from '../steps/additional-step/additional-step.component';
 import { CvPreviewComponent } from '../cv-preview/cv-preview.component';
 import { I18nService } from '../../services/i18n.service';
 import {CvUiState} from '../../models/cv.model';
@@ -33,8 +29,8 @@ interface Step {
 const STEPS: Step[] = [
   { id: 0, name: 'Profile', key: 'profile' },
   { id: 1, name: 'Experience', key: 'experience' },
-  { id: 4, name: 'Projects', key: 'projects' },
-  { id: 6, name: 'Languages', key: 'languages' },
+  { id: 2, name: 'Technologies', key: 'skills' },
+  { id: 3, name: 'Languages', key: 'languages' },
 ];
 
 @Component({
@@ -45,12 +41,8 @@ const STEPS: Step[] = [
     ReactiveFormsModule,
     ProfileStepComponent,
     ExperienceStepComponent,
-    EducationStepComponent,
     SkillsStepComponent,
-    ProjectsStepComponent,
-    CertificationsStepComponent,
     LanguagesStepComponent,
-    AdditionalStepComponent,
     CvPreviewComponent,
   ],
   templateUrl: './cv-editor.component.html',
@@ -67,37 +59,6 @@ export class CvEditorComponent implements OnInit, OnDestroy {
   validationNotice: string | null = null;
   private readonly visibleStepIds = new Set(STEPS.map(step => step.id));
   private formSubscription?: Subscription;
-  readonly hasPreviewData = computed(() => {
-    const cv = this.store.cv();
-
-    const hasProfileData = [
-      cv.profile.name,
-      cv.profile.title,
-      cv.profile.photoUrl,
-      cv.profile.email,
-      cv.profile.phone,
-      cv.profile.location,
-      cv.profile.website,
-      cv.profile.linkedin,
-      cv.profile.github,
-      cv.profile.summary,
-    ].some(value => this.hasText(value));
-
-    const hasSectionItems =
-      cv.experience.length > 0 ||
-      cv.education.length > 0 ||
-      cv.skills.length > 0 ||
-      cv.projects.length > 0 ||
-      cv.certifications.length > 0 ||
-      cv.languages.length > 0;
-
-    const hasAdditionalData =
-      (cv.additional.interests?.length ?? 0) > 0 ||
-      (cv.additional.volunteering?.length ?? 0) > 0 ||
-      (cv.additional.awards?.length ?? 0) > 0;
-
-    return hasProfileData || hasSectionItems || hasAdditionalData;
-  });
 
   get profileForm(): FormGroup {
     return this.cvForm.get('profile') as FormGroup;
@@ -132,7 +93,7 @@ export class CvEditorComponent implements OnInit, OnDestroy {
   }
 
   canShowLivePreview(): boolean {
-    return Boolean(this.cvForm) && this.cvForm.valid && this.hasPreviewData();
+    return Boolean(this.cvForm) && this.profileForm.valid;
   }
 
   stepLabel(key: StepKey): string {
@@ -141,8 +102,8 @@ export class CvEditorComponent implements OnInit, OnDestroy {
         return this.i18n.t('editor.step.profile');
       case 'experience':
         return this.i18n.t('editor.step.experience');
-      case 'projects':
-        return this.i18n.t('editor.step.projects');
+      case 'skills':
+        return this.i18n.t('editor.step.technologies');
       case 'languages':
         return this.i18n.t('editor.step.languages');
       default:
@@ -197,7 +158,7 @@ export class CvEditorComponent implements OnInit, OnDestroy {
     });
 
     this.cvForm.get('education')?.disable({ emitEvent: false });
-    this.cvForm.get('skills')?.disable({ emitEvent: false });
+    this.cvForm.get('projects')?.disable({ emitEvent: false });
     this.cvForm.get('certifications')?.disable({ emitEvent: false });
     this.cvForm.get('additional')?.disable({ emitEvent: false });
   }
@@ -207,15 +168,16 @@ export class CvEditorComponent implements OnInit, OnDestroy {
     this.formSubscription = this.cvForm.valueChanges
       .pipe(debounceTime(150))
       .subscribe(() => {
-        if (this.cvForm.valid) {
-          this.validationNotice = null;
+        if (this.profileForm.valid) {
           this.updateStore();
-          return;
         }
 
         if (this.cvForm.dirty) {
           this.validationNotice = this.i18n.t('editor.validation.formErrors');
+          return;
         }
+
+        this.validationNotice = null;
       });
   }
 
@@ -224,7 +186,7 @@ export class CvEditorComponent implements OnInit, OnDestroy {
     const experience = this.formService.experienceFormToModel(this.experienceForm);
     const education = this.formService.educationFormToModel(this.educationForm);
     const skills = this.formService.skillsFormToModel(this.skillsForm);
-    const projects = this.formService.projectsFormToModel(this.projectsForm);
+    const projects = this.store.cv().projects;
     const certifications = this.formService.certificationsFormToModel(this.certificationsForm);
     const languages = this.formService.languagesFormToModel(this.languagesForm);
     const additional = this.formService.additionalFormToModel(this.additionalForm);
@@ -263,23 +225,12 @@ export class CvEditorComponent implements OnInit, OnDestroy {
       case 1:
         return this.experienceForm;
       case 2:
-        return this.educationForm;
-      case 3:
         return this.skillsForm;
-      case 4:
-        return this.projectsForm;
-      case 5:
-        return this.certificationsForm;
-      case 6:
+      case 3:
         return this.languagesForm;
-      case 7:
-        return this.additionalForm;
       default:
         return null;
     }
   }
 
-  private hasText(value?: string): boolean {
-    return Boolean(value?.trim());
-  }
 }

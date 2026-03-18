@@ -4,13 +4,6 @@
   --classic-accent-soft: rgb(175 241 255 / 0.04);
 }
 
-.cv-template-classic.compact *:not(.skill-item) {
-  margin-bottom: 0.5rem;
-}
-.cv-template-classic.compact h2 {
-  margin-bottom: 0.75rem;
-}
-
 .classic-text {
   color: var(--classic-text);
 }

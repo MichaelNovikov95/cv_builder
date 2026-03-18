@@ -129,12 +129,9 @@ describe('CvStoreService', () => {
     expect(service.ui().showSections.experience).toBeTrue();
   });
 
-  it('should set active step, compact and clear error', () => {
+  it('should set active step and clear error', () => {
     service.setActiveStep(2);
     expect(service.ui().activeStep).toBe(2);
-
-    service.setCompact(true);
-    expect(service.ui().compact).toBeTrue();
 
     service.ui.update(ui => ({ ...ui, error: 'Some error' }));
     expect(service.ui().error).toBe('Some error');
@@ -286,7 +283,6 @@ describe('CvStoreService', () => {
           languages: true,
           additional: true,
         },
-        compact: true,
       } as CvUiState,
     };
 
@@ -298,7 +294,6 @@ describe('CvStoreService', () => {
     expect(service.cv().profile.email).toBe('loaded@example.com');
     expect(service.template()).toBe('minimal' as CvTemplate);
     expect(service.ui().activeStep).toBe(3);
-    expect(service.ui().compact).toBeTrue();
     expect(service.ui().showSections.experience).toBeFalse();
   });
 
